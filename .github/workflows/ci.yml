@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Tests + evals
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      # ── Deterministic guards — zero cost, run in MOCK, ALWAYS gate ──
+      - name: Judge deterministic checks (#5)
+        run: python test_signal.py
+
+      - name: Training-persistence guard (#17)
+        run: python test_training_persists.py
+
+      - name: Gold-set structural guard (#13)
+        run: python test_gold_set.py
+
+      # ── Eval report (informational) ──
+      # Runs run_evals.py in MOCK: exercises the learning check and validates the
+      # harness wiring on every push. The REAL judge gates (Cohen's κ, constraint,
+      # canary) need live Claude calls — and per CU2 policy the gateway key is NOT
+      # pasted in as a GitHub secret. It stays in Key Vault / the app's container
+      # secret; calibration is run out-of-band (Jasper, or a managed-identity job
+      # via azure/login that fetches the key at runtime — never copy-pasted).
+      # continue-on-error so MOCK-only artifacts (e.g. the flat-curve canary) don't
+      # red the build; the deterministic guards above are the real gate.
+      - name: Eval report (mock, informational)
+        continue-on-error: true
+        run: python evals/run_evals.py

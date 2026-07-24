@@ -1,0 +1,7 @@
+anthropic>=0.40.0
+matplotlib>=3.8
+flask>=2.3.0
+azure-storage-blob>=12.17.0
+# Actian VectorAI DB semantic playbook retrieval (runs in Azure; embeddings in-container).
+actian-vectorai-client>=1.0.2
+sentence-transformers>=2.2

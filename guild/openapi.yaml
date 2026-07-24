@@ -1,0 +1,158 @@
+openapi: 3.1.0
+info:
+  title: Gandalf Protocol API
+  version: "1.0.0"
+  description: >
+    The Gandalf self-learning loop, exposed as a REST API. Guild imports this spec to
+    create an integration; each operation below becomes an agent-callable tool
+    (the tool name is the operationId). Base URL is the live Azure Container App.
+servers:
+  - url: https://ca-gandalf-protocol.wittyflower-1831f2a2.westus2.azurecontainerapps.io
+    description: Production (Azure Container Apps, public ingress)
+
+# NOTE: the Gandalf API currently has NO auth. When Kirk adds an API key to app.py,
+# uncomment the securityScheme below and register it as a Guild credential.
+# components:
+#   securitySchemes:
+#     gandalfApiKey:
+#       type: apiKey
+#       in: header
+#       name: X-API-Key
+# security:
+#   - gandalfApiKey: []
+
+paths:
+  /api/run:
+    post:
+      operationId: startRun
+      summary: Start a learning run (async)
+      description: >
+        Kicks off an experiment on the server and returns immediately (202). The run
+        executes in the background; poll getRunStatus until running is false. Returns
+        409 if a run is already in progress.
+      parameters:
+        - name: condition
+          in: query
+          required: false
+          schema: { type: string, enum: [swarm, solo, ablation], default: swarm }
+          description: swarm (with distillation), solo (baseline, no sharing), or ablation (both).
+        - name: rounds
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 12, default: 6 }
+          description: Number of training rounds.
+      responses:
+        "202":
+          description: Run started.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: started }
+                  condition: { type: string }
+                  rounds: { type: integer }
+                  poll: { type: string, example: /api/status }
+        "409":
+          description: A run is already in progress.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: busy }
+                  phase: { type: string }
+                  message: { type: string }
+  /api/status:
+    get:
+      operationId: getRunStatus
+      summary: Current run status
+      description: Live phase, progress counts, and error (if any) for the active or last run.
+      responses:
+        "200":
+          description: Status snapshot.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  running: { type: boolean }
+                  phase: { type: string, example: running swarm }
+                  condition: { type: [string, "null"] }
+                  rounds: { type: integer }
+                  error: { type: [string, "null"] }
+                  llm_calls: { type: integer }
+                  total_episodes: { type: integer }
+                  training_episodes: { type: integer }
+                  validation_episodes: { type: integer }
+  /api/summary:
+    get:
+      operationId: getSummary
+      summary: Score summary
+      description: >
+        Episode counts plus score_history (mean thoughtfulness by occasion). This is what
+        the agent reads to judge whether the run learned.
+      responses:
+        "200":
+          description: Summary.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_episodes: { type: integer }
+                  training_episodes: { type: integer }
+                  validation_episodes: { type: integer }
+                  score_history:
+                    type: object
+                    additionalProperties: { type: number }
+  /api/results:
+    get:
+      operationId: getResults
+      summary: All stored episodes
+      description: The full episode list from the current store (can be large).
+      responses:
+        "200":
+          description: Episodes.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count: { type: integer }
+                  episodes:
+                    type: array
+                    items: { type: object, additionalProperties: true }
+  /api/charts:
+    get:
+      operationId: listCharts
+      summary: Chart URLs
+      description: Names + relative URLs of the rendered learning-curve charts.
+      responses:
+        "200":
+          description: Chart list.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  charts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name: { type: string }
+                        url: { type: string }
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Liveness check
+      responses:
+        "200":
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }

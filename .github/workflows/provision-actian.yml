@@ -1,0 +1,63 @@
+name: provision-actian
+
+# Stands up Actian VectorAI DB IN AZURE (nothing local) as its own Container App, and points
+# the Gandalf app at it. Manual dispatch — spins up an ~8 GB container (real cost), so fire
+# only when we've decided semantic playbook retrieval is worth it. Runs on GitHub's runner
+# with the deploy service principal (no local az).
+on:
+  workflow_dispatch:
+    inputs:
+      teardown:
+        description: "Delete the Actian container instead of creating it"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+env:
+  RESOURCE_GROUP: rg-cu2-forge
+  ACTIAN_APP: ca-actian-vectorai
+  GANDALF_APP: ca-gandalf-protocol
+
+jobs:
+  actian:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Teardown (optional)
+        if: ${{ inputs.teardown }}
+        run: |
+          az containerapp delete -n "$ACTIAN_APP" -g "$RESOURCE_GROUP" --yes || true
+          az containerapp update -n "$GANDALF_APP" -g "$RESOURCE_GROUP" --remove-env-vars ACTIAN_CONNECTION_STRING || true
+          echo "Actian torn down; Gandalf falls back to lexical retrieval (never-cut trio safe)."
+
+      - name: Provision Actian VectorAI DB (Azure Container App, ~8 GB)
+        if: ${{ !inputs.teardown }}
+        run: |
+          ENV=$(az containerapp env list -g "$RESOURCE_GROUP" --query "[0].name" -o tsv)
+          echo "environment: $ENV"
+          if az containerapp show -n "$ACTIAN_APP" -g "$RESOURCE_GROUP" >/dev/null 2>&1; then
+            echo "Actian app already exists."
+          else
+            # Consumption max is 4 vCPU / 8Gi — Actian needs >=8 GB. Internal ingress (http2/gRPC),
+            # port 6574. Only the Gandalf app in the same env can reach it.
+            az containerapp create -n "$ACTIAN_APP" -g "$RESOURCE_GROUP" \
+              --environment "$ENV" --image actian/vectorai:latest \
+              --cpu 4 --memory 8Gi --min-replicas 1 --max-replicas 1 \
+              --ingress internal --target-port 6574 --transport http2 \
+              --env-vars ACTIAN_VECTORAI_ACCEPT_EULA=YES
+          fi
+          FQDN=$(az containerapp show -n "$ACTIAN_APP" -g "$RESOURCE_GROUP" \
+            --query properties.configuration.ingress.fqdn -o tsv)
+          echo "Actian internal FQDN: $FQDN"
+          # Point Gandalf at it. Internal ACA http2 ingress terminates TLS at :443.
+          # NOTE: if the SDK can't negotiate TLS/gRPC over :443, switch to :6574 or a plaintext
+          # transport — expect one iteration here (watch this job's log + the app logs).
+          az containerapp update -n "$GANDALF_APP" -g "$RESOURCE_GROUP" \
+            --set-env-vars "ACTIAN_CONNECTION_STRING=${FQDN}:443"
+          echo "Gandalf now points at Actian. retrieval.py routes to _actian_topk; falls back to lexical on any error."

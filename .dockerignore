@@ -1,0 +1,15 @@
+# Never bake secrets, local state, or dev cruft into the image (Dockerfile does COPY . .)
+.env
+.env.*
+!.env.example
+store.json
+*.png
+.git
+.gitignore
+__pycache__/
+*.pyc
+.venv/
+venv/
+reference/broflo/   # reference-only lifted code; not needed at runtime
+*.md
+!README.md

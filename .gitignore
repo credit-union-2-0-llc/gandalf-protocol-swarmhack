@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.env
+store.json
+chart_*.png
+*.png
+.venv/
+venv/

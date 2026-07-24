@@ -1,0 +1,963 @@
+[
+  {
+    "profile": {
+      "interests": [{"value": "trail running", "confidence": 0.9, "evidence": "race photos", "polarity": "loves"}],
+      "already_owns": [{"value": "GPS watch", "confidence": 0.8}],
+      "constraints": [{"value": "vegan", "type": "dietary", "confidence": 0.9}],
+      "personality": {"gift_style_hint": "practical-experiences", "confidence": 0.7},
+      "hobbies": "trail running, weekend 50k training blocks",
+      "music_taste": "podcasts more than music, when pushed: 90s alt rock",
+      "favorite_brands": ["Patagonia", "Salomon"],
+      "food_preferences": "vegan, but not precious about it",
+      "clothing_sizes": {"top": "M", "bottom": "30x32", "shoe": "10"},
+      "pronouns": "she/her",
+      "allergens": [],
+      "dietary_restrictions": ["vegan"],
+      "tags": ["endurance-athlete", "minimalist-gear"],
+      "wishlist_items": ["trail race entry", "merino running socks"]
+    },
+    "hidden_truth": {
+      "would_love": ["a trail race entry", "merino running socks", "a vegan protein subscription"],
+      "would_return": ["another water bottle", "a generic gym bag"],
+      "already_has": ["GPS watch"]
+    },
+    "occasion": "birthday", "budget": {"min": 30, "max": 120}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "cooking", "confidence": 0.85, "evidence": "posts recipes", "polarity": "loves"}],
+      "already_owns": [{"value": "stand mixer", "confidence": 0.7}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "quality-objects", "confidence": 0.6},
+      "hobbies": "cooking, hosting dinner parties, growing herbs",
+      "music_taste": "jazz while cooking, otherwise doesn't care",
+      "favorite_brands": ["Le Creuset", "Williams Sonoma"],
+      "food_preferences": "omnivore, self-described olive oil snob",
+      "clothing_sizes": {"top": "L", "bottom": "34x30", "shoe": "11"},
+      "pronouns": "he/him",
+      "allergens": ["shellfish"],
+      "dietary_restrictions": [],
+      "tags": ["home-cook", "hosts-often"],
+      "wishlist_items": ["knife skills class", "single-origin olive oil set"]
+    },
+    "hidden_truth": {
+      "would_love": ["a knife skills class", "single-origin olive oil set", "a rare cast iron pan"],
+      "would_return": ["novelty apron", "any shellfish-adjacent cookware set"],
+      "already_has": ["stand mixer"]
+    },
+    "occasion": "anniversary", "budget": {"min": 50, "max": 200}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "vinyl records", "confidence": 0.8, "evidence": "collection photos", "polarity": "loves"}],
+      "already_owns": [],
+      "constraints": [{"value": "hates clutter", "type": "values", "confidence": 0.7}],
+      "personality": {"gift_style_hint": "curated-sentimental", "confidence": 0.65},
+      "hobbies": "vinyl collecting, minimalist apartment living",
+      "music_taste": "post-punk, shoegaze, deep cuts only",
+      "favorite_brands": ["Muji", "small independent record shops"],
+      "food_preferences": "no strong preference",
+      "clothing_sizes": {"top": "S", "bottom": "28", "shoe": "7"},
+      "pronouns": "they/them",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["collector", "anti-clutter", "contradiction: minimalist-who-collects"],
+      "wishlist_items": ["rare pressing", "concert ticket"]
+    },
+    "hidden_truth": {
+      "would_love": ["a rare pressing of a favorite album", "a concert ticket"],
+      "would_return": ["generic bluetooth speaker", "any decorative knick-knack"],
+      "already_has": []
+    },
+    "occasion": "holiday", "budget": {"min": 40, "max": 150}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "gaming", "confidence": 0.9, "evidence": "streams on weekends", "polarity": "loves"}],
+      "already_owns": [{"value": "gaming headset", "confidence": 0.8}],
+      "constraints": [{"value": "nut allergy", "type": "allergen", "confidence": 0.95}],
+      "personality": {"gift_style_hint": "trend-aware-streetwear", "confidence": 0.6},
+      "hobbies": "competitive gaming, streetwear collecting",
+      "music_taste": "hyperpop, lo-fi beats while gaming",
+      "favorite_brands": ["Supreme", "Razer"],
+      "food_preferences": "picky, mostly snacks, avoids anything with nuts",
+      "clothing_sizes": {"top": "M", "bottom": "32", "shoe": "9.5"},
+      "pronouns": "he/him",
+      "allergens": ["nuts", "tree nuts"],
+      "dietary_restrictions": [],
+      "tags": ["teen", "hard-to-shop-for-per-parent", "brand-conscious"],
+      "wishlist_items": ["mechanical keyboard", "limited sneaker drop"]
+    },
+    "hidden_truth": {
+      "would_love": ["a mechanical keyboard", "a streetwear gift card", "a game he's been eyeing"],
+      "would_return": ["anything containing nuts", "a generic hoodie with no brand cachet"],
+      "already_has": ["gaming headset"]
+    },
+    "occasion": "birthday", "budget": {"min": 20, "max": 80}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "new parenthood", "confidence": 0.9, "evidence": "sleep-deprived posts", "polarity": "complicated"}],
+      "already_owns": [{"value": "baby monitor", "confidence": 0.7}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "practical-self-care", "confidence": 0.7},
+      "hobbies": "used to hike, currently surviving on naps",
+      "music_taste": "whatever calms the baby down",
+      "favorite_brands": ["Uniqlo", "Sonos"],
+      "food_preferences": "anything she didn't have to cook",
+      "clothing_sizes": {"top": "M", "bottom": "30", "shoe": "8"},
+      "pronouns": "she/her",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["new-parent", "sarcastic-about-self-care-gifts"],
+      "wishlist_items": ["noise-cancelling headphones", "meal delivery gift card"]
+    },
+    "hidden_truth": {
+      "would_love": ["noise-cancelling headphones", "a meal delivery gift card", "an uninterrupted massage"],
+      "would_return": ["a scented candle", "a 'relax more' journal"],
+      "already_has": ["baby monitor"]
+    },
+    "occasion": "birthday", "budget": {"min": 40, "max": 150}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "golf", "confidence": 0.75, "evidence": "weekend tee times", "polarity": "loves"}],
+      "already_owns": [{"value": "golf rangefinder", "confidence": 0.8}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "claims-he-needs-nothing", "confidence": 0.5},
+      "hobbies": "golf, grilling, insists he 'doesn't need anything'",
+      "music_taste": "classic rock",
+      "favorite_brands": ["Titleist", "Weber"],
+      "food_preferences": "meat and potatoes, nothing fancy",
+      "clothing_sizes": {"top": "XL", "bottom": "38x32", "shoe": "11"},
+      "pronouns": "he/him",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["hard-to-shop-for-dad", "classic-notorious-gift-avoider"],
+      "wishlist_items": ["premium golf balls", "grilling thermometer"]
+    },
+    "hidden_truth": {
+      "would_love": ["premium golf balls he wouldn't buy himself", "a grilling thermometer"],
+      "would_return": ["a second rangefinder", "novelty golf gadgets"],
+      "already_has": ["golf rangefinder"]
+    },
+    "occasion": "father's day", "budget": {"min": 30, "max": 100}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "coffee culture", "confidence": 0.85, "evidence": "posts latte art", "polarity": "loves"}],
+      "already_owns": [{"value": "Stanley cup", "confidence": 0.9}],
+      "constraints": [{"value": "gluten-free", "type": "dietary", "confidence": 0.9}],
+      "personality": {"gift_style_hint": "brand-loyal", "confidence": 0.6},
+      "hobbies": "coffee shop hopping, journaling",
+      "music_taste": "indie folk",
+      "favorite_brands": ["Stanley", "Blue Bottle"],
+      "food_preferences": "gluten-free, will mention it unprompted",
+      "clothing_sizes": {"top": "S", "bottom": "26", "shoe": "6.5"},
+      "pronouns": "she/her",
+      "allergens": [],
+      "dietary_restrictions": ["gluten-free"],
+      "tags": ["coworker-gift", "already-owns-three-tumblers"],
+      "wishlist_items": ["specialty coffee subscription", "gluten-free bakery gift card"]
+    },
+    "hidden_truth": {
+      "would_love": ["a specialty coffee subscription", "a gluten-free bakery gift card"],
+      "would_return": ["a fourth Stanley cup", "any baked good with gluten"],
+      "already_has": ["Stanley cup"]
+    },
+    "occasion": "coworker gift exchange", "budget": {"min": 15, "max": 25}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "knitting", "confidence": 0.8, "evidence": "gifts hand-knit items", "polarity": "loves"}],
+      "already_owns": [],
+      "constraints": [{"value": "kosher", "type": "dietary", "confidence": 0.85}],
+      "personality": {"gift_style_hint": "experiences-over-stuff", "confidence": 0.75},
+      "hobbies": "knitting, bridge club, gardening",
+      "music_taste": "classical, showtunes",
+      "favorite_brands": ["doesn't care about brands"],
+      "food_preferences": "kosher, loves a good bakery",
+      "clothing_sizes": {"top": "M", "bottom": "n/a", "shoe": "8"},
+      "pronouns": "she/her",
+      "allergens": [],
+      "dietary_restrictions": ["kosher"],
+      "tags": ["grandmother", "values-experiences", "distrusts-gadgets"],
+      "wishlist_items": ["theater tickets", "nice yarn"]
+    },
+    "hidden_truth": {
+      "would_love": ["theater tickets", "a bundle of high-quality yarn", "a photo album of grandkids"],
+      "would_return": ["any 'as seen on TV' gadget", "non-kosher food gift baskets"],
+      "already_has": []
+    },
+    "occasion": "holiday", "budget": {"min": 30, "max": 90}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "sneaker collecting", "confidence": 0.8, "evidence": "posts unboxings", "polarity": "loves"}],
+      "already_owns": [{"value": "several pairs of limited sneakers", "confidence": 0.7}],
+      "constraints": [{"value": "vegetarian", "type": "dietary", "confidence": 0.8}],
+      "personality": {"gift_style_hint": "broke-aesthetic-expensive-habit", "confidence": 0.6},
+      "hobbies": "sneaker collecting, thrifting, tight on cash as a student",
+      "music_taste": "hip-hop, playlist curator",
+      "favorite_brands": ["Nike", "New Balance"],
+      "food_preferences": "vegetarian, lives on instant noodles otherwise",
+      "clothing_sizes": {"top": "M", "bottom": "30", "shoe": "9"},
+      "pronouns": "he/him",
+      "allergens": [],
+      "dietary_restrictions": ["vegetarian"],
+      "tags": ["college-student", "contradiction: broke-but-expensive-hobby"],
+      "wishlist_items": ["sneaker cleaning kit", "gift card to sneaker resale site"]
+    },
+    "hidden_truth": {
+      "would_love": ["a sneaker cleaning kit", "a resale-site gift card", "cash, honestly"],
+      "would_return": ["a meat-heavy gift basket", "generic non-brand shoes"],
+      "already_has": ["several pairs of limited sneakers"]
+    },
+    "occasion": "birthday", "budget": {"min": 15, "max": 40}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "CrossFit", "confidence": 0.9, "evidence": "competition results", "polarity": "loves"}],
+      "already_owns": [{"value": "lifting belt", "confidence": 0.85}],
+      "constraints": [{"value": "shellfish allergy", "type": "allergen", "confidence": 0.95}],
+      "personality": {"gift_style_hint": "niche-performance-gear", "confidence": 0.7},
+      "hobbies": "CrossFit, competes regionally",
+      "music_taste": "hard techno for training",
+      "favorite_brands": ["Rogue", "NOBULL"],
+      "food_preferences": "high protein, no shellfish ever",
+      "clothing_sizes": {"top": "L", "bottom": "32", "shoe": "10.5"},
+      "pronouns": "she/her",
+      "allergens": ["shellfish"],
+      "dietary_restrictions": [],
+      "tags": ["competitive-athlete", "gear-particular"],
+      "wishlist_items": ["wrist wraps", "competition entry fee"]
+    },
+    "hidden_truth": {
+      "would_love": ["specialty wrist wraps", "a competition entry fee", "niche recovery tools"],
+      "would_return": ["a second lifting belt", "any shellfish-based protein snacks"],
+      "already_has": ["lifting belt"]
+    },
+    "occasion": "birthday", "budget": {"min": 40, "max": 130}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "unclear — keeps to himself", "confidence": 0.3, "evidence": "one-word answers at family dinners", "polarity": "unknown"}],
+      "already_owns": [{"value": "a tablet everyone assumed he'd like", "confidence": 0.6}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "unknown", "confidence": 0.2, "difficulty": "hard"},
+      "hobbies": "mentioned fly-fishing once, three years ago, never brought up again",
+      "music_taste": "unknown",
+      "favorite_brands": [],
+      "food_preferences": "unknown",
+      "clothing_sizes": {"top": "unknown", "bottom": "unknown", "shoe": "unknown"},
+      "pronouns": "he/him",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["sparse-dossier", "quiet-relative", "difficulty:hard"],
+      "wishlist_items": []
+    },
+    "hidden_truth": {
+      "would_love": ["a simple fly-tying kit", "a day pass to a local fishing spot"],
+      "would_return": ["another tech gadget", "anything that requires small talk to use"],
+      "already_has": ["a tablet everyone assumed he'd like"]
+    },
+    "occasion": "holiday", "budget": {"min": 20, "max": 60}
+  },
+  {
+    "profile": {
+      "interests": [],
+      "already_owns": [],
+      "constraints": [],
+      "personality": {"gift_style_hint": "unknown, barely know them", "confidence": 0.15, "difficulty": "hard"},
+      "hobbies": "unknown — new hire, three weeks in",
+      "music_taste": "unknown",
+      "favorite_brands": [],
+      "food_preferences": "unknown",
+      "clothing_sizes": {"top": "unknown", "bottom": "unknown", "shoe": "unknown"},
+      "pronouns": "they/them",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["sparse-dossier", "new-coworker", "difficulty:hard"],
+      "wishlist_items": []
+    },
+    "hidden_truth": {
+      "would_love": ["a small desk plant", "a good pen, something that signals someone paid attention"],
+      "would_return": ["generic branded company swag", "anything that assumes hobbies not yet known"],
+      "already_has": []
+    },
+    "occasion": "coworker gift exchange", "budget": {"min": 10, "max": 20}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "insists she's 'too old' for anything childish", "confidence": 0.7, "evidence": "eye-rolls at kid-coded gifts", "polarity": "complicated"}],
+      "already_owns": [{"value": "a phone case", "confidence": 0.7}, {"value": "a bluetooth speaker", "confidence": 0.6}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "performs indifference", "confidence": 0.5, "difficulty": "hard"},
+      "hobbies": "used to collect a specific cartoon's merch as a kid, now pretends she never did",
+      "music_taste": "whatever's trending, publicly; privately still has the old show's soundtrack saved",
+      "favorite_brands": ["whatever her friends wear"],
+      "food_preferences": "picky, mostly snacks",
+      "clothing_sizes": {"top": "S", "bottom": "26", "shoe": "8"},
+      "pronouns": "she/her",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["teen", "contradiction: nostalgia-she-denies", "difficulty:hard"],
+      "wishlist_items": []
+    },
+    "hidden_truth": {
+      "would_love": ["a low-key nostalgia item from that old cartoon, nothing babyish about the packaging", "a gift card she can spend without anyone watching"],
+      "would_return": ["another phone case", "another bluetooth speaker", "anything visibly kid-branded"],
+      "already_has": ["a phone case", "a bluetooth speaker"]
+    },
+    "occasion": "birthday", "budget": {"min": 15, "max": 35}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "says she doesn't want anything", "confidence": 0.6, "evidence": "declines every gift suggestion", "polarity": "complicated"}],
+      "already_owns": [{"value": "a self-care gift basket from last year, unopened", "confidence": 0.8}],
+      "constraints": [{"value": "environmentally conscious", "type": "values", "confidence": 0.75}],
+      "personality": {"gift_style_hint": "experiences-and-causes-over-objects", "confidence": 0.6, "difficulty": "hard"},
+      "hobbies": "zero-waste living, volunteers at a community garden",
+      "music_taste": "unknown, doesn't talk about it",
+      "favorite_brands": ["avoids brands on principle"],
+      "food_preferences": "no strong preference, dislikes excess packaging",
+      "clothing_sizes": {"top": "M", "bottom": "n/a", "shoe": "n/a"},
+      "pronouns": "she/her",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["minimalist", "hard-to-shop-for-streak", "difficulty:hard"],
+      "wishlist_items": []
+    },
+    "hidden_truth": {
+      "would_love": ["a donation made in her name to the community garden", "a class on something she'd never pay for herself"],
+      "would_return": ["another self-care basket", "anything single-use or over-packaged"],
+      "already_has": ["a self-care gift basket from last year, unopened"]
+    },
+    "occasion": "birthday", "budget": {"min": 25, "max": 70}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "used to run marathons", "confidence": 0.6, "evidence": "old race photos, nothing recent", "polarity": "complicated"}],
+      "already_owns": [],
+      "constraints": [{"value": "recovering from a leg injury, limited mobility", "type": "medical", "confidence": 0.8}],
+      "personality": {"gift_style_hint": "unknown post-injury, used to be practical-experiences", "confidence": 0.4, "difficulty": "hard"},
+      "hobbies": "was training for a marathon, now mostly resting per doctor's orders",
+      "music_taste": "audiobooks and podcasts since she has more downtime now",
+      "favorite_brands": ["Patagonia"],
+      "food_preferences": "no strong preference",
+      "clothing_sizes": {"top": "S", "bottom": "28", "shoe": "8"},
+      "pronouns": "she/her",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["recency-trap", "contradiction: athlete-profile-now-sidelined", "difficulty:hard"],
+      "wishlist_items": []
+    },
+    "hidden_truth": {
+      "would_love": ["a weighted blanket for the couch-bound recovery", "an audiobook subscription"],
+      "would_return": ["new running shoes", "anything assuming she can run right now"],
+      "already_has": []
+    },
+    "occasion": "get well soon", "budget": {"min": 25, "max": 80}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "houseplants", "confidence": 0.85, "evidence": "just moved, posting empty-room photos", "polarity": "loves"}],
+      "already_owns": [{"value": "a basic starter tool set", "confidence": 0.6}],
+      "constraints": [{"value": "small rental, no drilling holes", "type": "values", "confidence": 0.7}],
+      "personality": {"gift_style_hint": "practical-for-the-new-space", "confidence": 0.7},
+      "hobbies": "plant care, slowly furnishing a first apartment",
+      "music_taste": "indie pop",
+      "favorite_brands": ["IKEA", "local plant shops"],
+      "food_preferences": "omnivore, loves cooking but tiny kitchen",
+      "clothing_sizes": {"top": "M", "bottom": "31", "shoe": "9"},
+      "pronouns": "he/him",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["new-homeowner", "space-constrained"],
+      "wishlist_items": ["a statement plant", "quality kitchen basics"]
+    },
+    "hidden_truth": {
+      "would_love": ["a large low-maintenance statement plant", "a nice pour-over coffee setup", "renter-friendly (no-drill) shelving"],
+      "would_return": ["anything requiring wall-drilling", "a fourth throw blanket"],
+      "already_has": ["a basic starter tool set"]
+    },
+    "occasion": "housewarming", "budget": {"min": 30, "max": 90}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "photography", "confidence": 0.8, "evidence": "documents everything, just had a baby", "polarity": "loves"}],
+      "already_owns": [{"value": "a stroller and the big-ticket baby gear", "confidence": 0.8}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "sentimental-and-useful", "confidence": 0.7},
+      "hobbies": "photography, first-time parent finding their feet",
+      "music_taste": "lo-fi, lullaby playlists lately",
+      "favorite_brands": ["Fujifilm", "local baby boutiques"],
+      "food_preferences": "too tired to cook, grateful for anything",
+      "clothing_sizes": {"top": "L", "bottom": "34", "shoe": "10"},
+      "pronouns": "they/them",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["new-parent", "gift-is-really-for-the-baby-but-not-only"],
+      "wishlist_items": ["something to capture memories", "a night of sleep"]
+    },
+    "hidden_truth": {
+      "would_love": ["a photo book service to print the thousands of baby photos", "a meal-delivery gift card", "a keepsake for the baby that isn't more clothes"],
+      "would_return": ["yet another newborn outfit", "loud plastic toys"],
+      "already_has": ["a stroller and the big-ticket baby gear"]
+    },
+    "occasion": "new baby", "budget": {"min": 40, "max": 120}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "woodworking", "confidence": 0.9, "evidence": "just retired, finally has shop time", "polarity": "loves"}],
+      "already_owns": [{"value": "a full basic hand-tool collection", "confidence": 0.85}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "quality-tools-and-time", "confidence": 0.75},
+      "hobbies": "woodworking, fishing, planning a big trip now that he's retired",
+      "music_taste": "blues, old country",
+      "favorite_brands": ["DeWalt", "Lee Valley"],
+      "food_preferences": "meat-and-potatoes, enjoys a good steak",
+      "clothing_sizes": {"top": "XL", "bottom": "40x30", "shoe": "12"},
+      "pronouns": "he/him",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["retiree", "hobbyist-with-new-time"],
+      "wishlist_items": ["a premium chisel set", "a woodworking class"]
+    },
+    "hidden_truth": {
+      "would_love": ["a premium chisel or hand-plane he wouldn't splurge on himself", "a woodworking masterclass", "a nice engraved retirement keepsake"],
+      "would_return": ["a generic 'World's Best Retiree' mug", "another basic screwdriver set"],
+      "already_has": ["a full basic hand-tool collection"]
+    },
+    "occasion": "retirement", "budget": {"min": 50, "max": 200}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "tea culture", "confidence": 0.8, "evidence": "brings her own loose-leaf to the office", "polarity": "loves"}],
+      "already_owns": [{"value": "an electric kettle", "confidence": 0.7}],
+      "constraints": [{"value": "caffeine-sensitive, herbal only after noon", "type": "dietary", "confidence": 0.7}],
+      "personality": {"gift_style_hint": "small-thoughtful-consumables", "confidence": 0.65},
+      "hobbies": "loose-leaf tea, crossword puzzles, quiet hobbyist",
+      "music_taste": "classical piano",
+      "favorite_brands": ["local tea shops"],
+      "food_preferences": "light eater, sweet tooth for good chocolate",
+      "clothing_sizes": {"top": "S", "bottom": "27", "shoe": "7"},
+      "pronouns": "she/her",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["coworker-gift", "consumable-lover"],
+      "wishlist_items": ["a rare herbal tea sampler", "nice dark chocolate"]
+    },
+    "hidden_truth": {
+      "would_love": ["a caffeine-free herbal tea sampler from a real tea shop", "good dark chocolate", "a nice crossword collection"],
+      "would_return": ["a highly caffeinated coffee gift set", "a second kettle"],
+      "already_has": ["an electric kettle"]
+    },
+    "occasion": "coworker gift exchange", "budget": {"min": 15, "max": 30}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "cycling", "confidence": 0.85, "evidence": "commutes by bike year-round", "polarity": "loves"}],
+      "already_owns": [{"value": "a good commuter bike and helmet", "confidence": 0.8}],
+      "constraints": [{"value": "pescatarian", "type": "dietary", "confidence": 0.8}],
+      "personality": {"gift_style_hint": "practical-upgrades", "confidence": 0.7},
+      "hobbies": "bike commuting, weekend long rides, cooking seafood",
+      "music_taste": "electronic, upbeat riding playlists",
+      "favorite_brands": ["Rapha", "Ortlieb"],
+      "food_preferences": "pescatarian, adventurous cook",
+      "clothing_sizes": {"top": "M", "bottom": "32", "shoe": "10"},
+      "pronouns": "she/her",
+      "allergens": [],
+      "dietary_restrictions": ["pescatarian"],
+      "tags": ["commuter-cyclist", "practical-upgrader"],
+      "wishlist_items": ["better panniers", "quality bike lights"]
+    },
+    "hidden_truth": {
+      "would_love": ["a set of waterproof panniers", "premium rechargeable bike lights", "a nice seafood cookbook"],
+      "would_return": ["a second helmet", "a meat-heavy grilling set"],
+      "already_has": ["a good commuter bike and helmet"]
+    },
+    "occasion": "birthday", "budget": {"min": 40, "max": 130}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "baking", "confidence": 0.7, "evidence": "brings treats to the office", "polarity": "loves"}],
+      "already_owns": [],
+      "constraints": [{"value": "vegan", "type": "dietary", "confidence": 0.95}, {"value": "nut allergy", "type": "allergen", "confidence": 0.95}, {"value": "gluten-free", "type": "dietary", "confidence": 0.9}],
+      "personality": {"gift_style_hint": "thoughtful-non-food", "confidence": 0.5, "difficulty": "hard"},
+      "hobbies": "baking (vegan/gf), reading, tight budget Secret Santa",
+      "music_taste": "folk",
+      "favorite_brands": [],
+      "food_preferences": "vegan AND gluten-free AND nut-allergic — almost every food gift is off-limits",
+      "clothing_sizes": {"top": "M", "bottom": "30", "shoe": "8"},
+      "pronouns": "she/her",
+      "allergens": ["nuts", "tree nuts"],
+      "dietary_restrictions": ["vegan", "gluten-free"],
+      "tags": ["stacked-constraints", "tight-budget", "difficulty:hard"],
+      "wishlist_items": ["nice tea towels", "a good silicone baking mat"]
+    },
+    "hidden_truth": {
+      "would_love": ["quality non-food baking tools (silicone mat, bench scraper)", "a vegan+gf baking cookbook", "nice tea towels"],
+      "would_return": ["a standard chocolate/cookie gift box (breaks all three constraints)", "a nut-based snack set", "anything she has to check the label on"],
+      "already_has": []
+    },
+    "occasion": "coworker gift exchange", "budget": {"min": 15, "max": 20}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "crypto and gadgets", "confidence": 0.85, "evidence": "old posts full of tech unboxings", "polarity": "outdated"}],
+      "already_owns": [{"value": "every gadget you can think of", "confidence": 0.7}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "signals-tech-but-has-moved-on", "confidence": 0.4, "difficulty": "hard"},
+      "hobbies": "publicly still 'the tech guy', privately burned out on screens, quietly took up pottery",
+      "music_taste": "ambient, has been going to sound baths",
+      "favorite_brands": ["used to be Apple/Tesla; now doesn't care"],
+      "food_preferences": "no strong preference",
+      "clothing_sizes": {"top": "L", "bottom": "34", "shoe": "11"},
+      "pronouns": "he/him",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["stale-profile", "misleading-signals", "difficulty:hard"],
+      "wishlist_items": []
+    },
+    "hidden_truth": {
+      "would_love": ["a beginner pottery class", "an analog / screen-free hobby item", "anything that gets him away from tech"],
+      "would_return": ["the latest gadget", "a crypto-themed novelty item", "anything the old profile would 'obviously' suggest"],
+      "already_has": ["every gadget you can think of"]
+    },
+    "occasion": "birthday", "budget": {"min": 40, "max": 150}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "unknown — buying for partner's father", "confidence": 0.25, "evidence": "met him twice, all info secondhand", "polarity": "unknown"}],
+      "already_owns": [{"value": "unclear", "confidence": 0.2}],
+      "constraints": [{"value": "diabetic (per partner)", "type": "medical", "confidence": 0.6}],
+      "personality": {"gift_style_hint": "unknown, want to make a good impression", "confidence": 0.2, "difficulty": "hard"},
+      "hobbies": "partner says: 'he likes history and his garden, I think?'",
+      "music_taste": "unknown",
+      "favorite_brands": [],
+      "food_preferences": "diabetic — avoid sugary food gifts",
+      "clothing_sizes": {"top": "unknown", "bottom": "unknown", "shoe": "unknown"},
+      "pronouns": "he/him",
+      "allergens": [],
+      "dietary_restrictions": ["low-sugar"],
+      "tags": ["proxy-buying", "sparse-secondhand", "high-stakes-impression", "difficulty:hard"],
+      "wishlist_items": []
+    },
+    "hidden_truth": {
+      "would_love": ["a well-reviewed history book on a period he likes", "quality gardening gloves or tools", "something that shows effort was made despite not knowing him well"],
+      "would_return": ["a box of chocolates or sweets (he's diabetic)", "a generic gift card that signals zero thought", "anything too personal for someone you've met twice"],
+      "already_has": []
+    },
+    "occasion": "holiday", "budget": {"min": 30, "max": 80}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "fine wine, travel, design", "confidence": 0.8, "evidence": "already owns the nice version of everything", "polarity": "loves"}],
+      "already_owns": [{"value": "anything money can easily buy", "confidence": 0.8}],
+      "constraints": [{"value": "budget is not the issue — thoughtfulness is", "type": "values", "confidence": 0.7}],
+      "personality": {"gift_style_hint": "experiences-and-meaning-over-luxury-objects", "confidence": 0.6, "difficulty": "hard"},
+      "hobbies": "wine collecting, frequent traveler, appreciates good design, hard to impress",
+      "music_taste": "jazz, vinyl",
+      "favorite_brands": ["already has the premium of everything"],
+      "food_preferences": "refined palate, no restrictions",
+      "clothing_sizes": {"top": "M", "bottom": "32", "shoe": "10"},
+      "pronouns": "she/her",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["has-everything", "affluent", "hard-to-impress", "difficulty:hard"],
+      "wishlist_items": []
+    },
+    "hidden_truth": {
+      "would_love": ["a personal, hard-to-buy experience (a private tasting, a meaningful handwritten/commissioned thing)", "something tied to a specific memory or inside knowledge", "a donation or gesture that reflects her values"],
+      "would_return": ["an expensive-but-generic luxury item she'd have bought herself", "a bottle of wine that's nice but nothing she couldn't pick better", "anything that just spends money without thought"],
+      "already_has": ["anything money can easily buy"]
+    },
+    "occasion": "anniversary", "budget": {"min": 100, "max": 400}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "literary fiction, sustainability, 'serious' culture", "confidence": 0.8, "evidence": "very curated public persona", "polarity": "loves"}],
+      "already_owns": [{"value": "a tasteful, minimal apartment", "confidence": 0.6}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "public-highbrow-private-guilty-pleasure", "confidence": 0.45, "difficulty": "hard"},
+      "hobbies": "publicly: literary fiction, natural wine, arthouse film. privately: obsessed with a trashy reality-TV franchise, would never admit it",
+      "music_taste": "publicly classical/jazz; privately 2000s pop",
+      "favorite_brands": ["curated indie brands publicly"],
+      "food_preferences": "no restrictions, secret junk-food weakness",
+      "clothing_sizes": {"top": "S", "bottom": "27", "shoe": "7.5"},
+      "pronouns": "they/them",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["public-vs-private-taste", "contradiction", "difficulty:hard"],
+      "wishlist_items": ["a highbrow literary anthology (the safe guess)"]
+    },
+    "hidden_truth": {
+      "would_love": ["a tongue-in-cheek nod to the guilty-pleasure reality show (only if given privately, not publicly)", "something that shows you see past the curated image", "a genuinely fun, unserious gift"],
+      "would_return": ["another prestige literary anthology (the obvious, safe, boring guess)", "anything that just plays to the public persona", "a worthy-but-joyless 'improving' gift"],
+      "already_has": ["a tasteful, minimal apartment"]
+    },
+    "occasion": "birthday", "budget": {"min": 25, "max": 70}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "rescue dogs", "confidence": 0.9, "evidence": "posts nonstop about her rescue pup", "polarity": "loves"}],
+      "already_owns": [{"value": "the basic leash/bowl/bed setup", "confidence": 0.8}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "gifts-for-the-dog-delight-her-more-than-gifts-for-herself", "confidence": 0.7},
+      "hobbies": "dog walks, agility training, weekend hikes with the pup",
+      "music_taste": "country",
+      "favorite_brands": ["Kurgo", "local pet boutiques"],
+      "food_preferences": "omnivore",
+      "clothing_sizes": {"top": "M", "bottom": "30", "shoe": "8"},
+      "pronouns": "she/her",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["dog-parent", "gift-the-pet"],
+      "wishlist_items": ["a nice dog harness", "an agility starter kit"]
+    },
+    "hidden_truth": {
+      "would_love": ["a quality no-pull harness for the dog", "a pet portrait of her rescue pup", "an agility training class for the two of them"],
+      "would_return": ["a generic 'dog mom' mug", "another basic leash or bowl"],
+      "already_has": ["the basic leash/bowl/bed setup"]
+    },
+    "occasion": "mother's day", "budget": {"min": 25, "max": 80}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "amateur astronomy", "confidence": 0.85, "evidence": "shares moon photos", "polarity": "loves"}],
+      "already_owns": [{"value": "a starter telescope", "confidence": 0.8}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "wants-to-go-deeper-on-the-hobby", "confidence": 0.7},
+      "hobbies": "stargazing, astrophotography, just graduated and moving to a darker-sky area",
+      "music_taste": "post-rock, ambient",
+      "favorite_brands": ["Celestron"],
+      "food_preferences": "vegetarian",
+      "clothing_sizes": {"top": "L", "bottom": "32", "shoe": "10"},
+      "pronouns": "he/him",
+      "allergens": [],
+      "dietary_restrictions": ["vegetarian"],
+      "tags": ["hobbyist-leveling-up", "graduate"],
+      "wishlist_items": ["better eyepieces", "a planisphere / sky atlas"]
+    },
+    "hidden_truth": {
+      "would_love": ["a quality eyepiece or filter that upgrades the scope he has", "a national-park dark-sky pass", "a well-regarded star atlas"],
+      "would_return": ["a second beginner telescope", "a cheap toy 'space' novelty item"],
+      "already_has": ["a starter telescope"]
+    },
+    "occasion": "graduation", "budget": {"min": 40, "max": 130}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "yoga and wellness", "confidence": 0.8, "evidence": "daily practice, just got promoted", "polarity": "loves"}],
+      "already_owns": [{"value": "a good yoga mat", "confidence": 0.8}],
+      "constraints": [{"value": "sensitive to strong fragrances", "type": "values", "confidence": 0.6}],
+      "personality": {"gift_style_hint": "calm-quality-over-quantity", "confidence": 0.65},
+      "hobbies": "yoga, meditation, journaling, celebrating a new promotion",
+      "music_taste": "lo-fi, singing bowls",
+      "favorite_brands": ["Lululemon", "Manduka"],
+      "food_preferences": "mostly plant-based",
+      "clothing_sizes": {"top": "S", "bottom": "27", "shoe": "7"},
+      "pronouns": "she/her",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["wellness", "promotion", "fragrance-sensitive"],
+      "wishlist_items": ["a nicer cork yoga block set", "a meditation cushion"]
+    },
+    "hidden_truth": {
+      "would_love": ["a premium cork yoga block/strap set", "a meditation cushion", "a class pass to a studio she likes"],
+      "would_return": ["a heavily-scented candle or incense set", "another basic yoga mat"],
+      "already_has": ["a good yoga mat"]
+    },
+    "occasion": "promotion", "budget": {"min": 30, "max": 100}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "board games", "confidence": 0.85, "evidence": "hosts a weekly game night", "polarity": "loves"}],
+      "already_owns": [{"value": "all the popular gateway games (Catan, Ticket to Ride)", "confidence": 0.8}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "wants-deeper-cuts-not-the-obvious-hits", "confidence": 0.7},
+      "hobbies": "board games, hosting game nights for 4-6 people",
+      "music_taste": "video game soundtracks",
+      "favorite_brands": ["Stonemaier", "local game stores"],
+      "food_preferences": "omnivore, snacky",
+      "clothing_sizes": {"top": "XL", "bottom": "36", "shoe": "12"},
+      "pronouns": "he/him",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["hobbyist-collector", "owns-the-obvious-ones"],
+      "wishlist_items": ["a well-reviewed mid-weight strategy game", "quality card sleeves/organizer"]
+    },
+    "hidden_truth": {
+      "would_love": ["a well-reviewed strategy game beyond the gateway hits he owns", "a nice insert/organizer for a game he loves", "a game that plays well at his usual group size"],
+      "would_return": ["another copy of Catan or a game he already owns", "a generic party game"],
+      "already_has": ["all the popular gateway games (Catan, Ticket to Ride)"]
+    },
+    "occasion": "holiday", "budget": {"min": 30, "max": 90}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "home mixology", "confidence": 0.8, "evidence": "makes cocktails for guests", "polarity": "loves"}],
+      "already_owns": [{"value": "a basic shaker and jigger set", "confidence": 0.75}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "quality-consumables-and-upgrades", "confidence": 0.65},
+      "hobbies": "cocktail-making, hosting, newlyweds building their first shared home bar",
+      "music_taste": "jazz, soul",
+      "favorite_brands": ["Cocktail Kingdom"],
+      "food_preferences": "omnivore",
+      "clothing_sizes": {"top": "M", "bottom": "31", "shoe": "9"},
+      "pronouns": "they/them",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["couple-gift", "hobbyist-upgrading"],
+      "wishlist_items": ["quality bar tools", "a craft bitters or syrup set"]
+    },
+    "hidden_truth": {
+      "would_love": ["a craft bitters/syrup sampler", "a nice pair of coupe glasses", "a cocktail masterclass for two"],
+      "would_return": ["another basic shaker set", "a novelty 'drink o'clock' gadget"],
+      "already_has": ["a basic shaker and jigger set"]
+    },
+    "occasion": "wedding", "budget": {"min": 50, "max": 150}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "film photography", "confidence": 0.85, "evidence": "shoots on an old 35mm camera", "polarity": "loves"}],
+      "already_owns": [{"value": "a 35mm film camera", "confidence": 0.85}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "romantic-personal-over-generic", "confidence": 0.7},
+      "hobbies": "film photography, weekend road trips together, my partner of 4 years",
+      "music_taste": "indie, the band from our first concert",
+      "favorite_brands": ["Kodak", "small film labs"],
+      "food_preferences": "loves trying new restaurants together",
+      "clothing_sizes": {"top": "S", "bottom": "27", "shoe": "7"},
+      "pronouns": "she/her",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["romantic-partner", "personal-history-matters"],
+      "wishlist_items": ["film developing credit", "a photo book of our trips"]
+    },
+    "hidden_truth": {
+      "would_love": ["a printed photo book of our road trips", "a roll-developing subscription for her film", "tickets to see the band from our first date"],
+      "would_return": ["a generic heart-shaped box of chocolates", "flowers with no thought behind them"],
+      "already_has": ["a 35mm film camera"]
+    },
+    "occasion": "valentine's day", "budget": {"min": 40, "max": 150}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "dinosaurs and building things", "confidence": 0.9, "evidence": "narrates dino facts nonstop", "polarity": "loves"}],
+      "already_owns": [{"value": "a big bin of basic building blocks", "confidence": 0.8}],
+      "constraints": [{"value": "small parts unsafe — he's 6", "type": "safety", "confidence": 0.9}],
+      "personality": {"gift_style_hint": "hands-on-and-dino-themed", "confidence": 0.8},
+      "hobbies": "dinosaurs, building, digging in the yard for 'fossils'",
+      "music_taste": "kids' songs",
+      "favorite_brands": ["LEGO (age-appropriate sets)"],
+      "food_preferences": "picky, no strong gift relevance",
+      "clothing_sizes": {"top": "6-7y", "bottom": "6y", "shoe": "13 kids"},
+      "pronouns": "he/him",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["young-child", "age-appropriate-matters"],
+      "wishlist_items": ["a dino dig kit", "an age-appropriate building set"]
+    },
+    "hidden_truth": {
+      "would_love": ["a dinosaur excavation dig kit", "an age-6 building set", "a big illustrated dinosaur book"],
+      "would_return": ["a set with choking-hazard small parts (he's 6)", "a screen-based gadget his parents will veto"],
+      "already_has": ["a big bin of basic building blocks"]
+    },
+    "occasion": "birthday", "budget": {"min": 20, "max": 60}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "unclear — it's my boss", "confidence": 0.3, "evidence": "professional relationship, limited personal info", "polarity": "unknown"}],
+      "already_owns": [{"value": "presumably nice things, hard to say", "confidence": 0.3}],
+      "constraints": [{"value": "must stay professional — nothing too personal or expensive", "type": "values", "confidence": 0.85}],
+      "personality": {"gift_style_hint": "tasteful-neutral-appropriate", "confidence": 0.4, "difficulty": "hard"},
+      "hobbies": "mentions golf and good coffee in passing; otherwise a professional distance",
+      "music_taste": "unknown",
+      "favorite_brands": ["orders oat-milk lattes"],
+      "food_preferences": "coffee drinker",
+      "clothing_sizes": {"top": "unknown", "bottom": "unknown", "shoe": "unknown"},
+      "pronouns": "he/him",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["boss", "professional-distance", "difficulty:hard"],
+      "wishlist_items": []
+    },
+    "hidden_truth": {
+      "would_love": ["a nice specialty coffee from a good roaster", "a tasteful, modest desk item", "something thoughtful but clearly professional"],
+      "would_return": ["anything overly personal (cologne, clothing)", "an extravagant gift that creates awkwardness", "a gag gift that misreads the relationship"],
+      "already_has": []
+    },
+    "occasion": "holiday", "budget": {"min": 20, "max": 50}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "indie video games and ramen", "confidence": 0.85, "evidence": "my younger brother, I know him well", "polarity": "loves"}],
+      "already_owns": [{"value": "a current-gen console", "confidence": 0.85}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "in-jokes-and-specific-taste", "confidence": 0.8},
+      "hobbies": "indie games, making ramen from scratch, we share a sense of humor",
+      "music_taste": "video game OSTs, vaporwave",
+      "favorite_brands": ["itch.io indie devs"],
+      "food_preferences": "ramen obsessive, no restrictions",
+      "clothing_sizes": {"top": "M", "bottom": "31", "shoe": "10"},
+      "pronouns": "he/him",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["sibling", "know-them-well"],
+      "wishlist_items": ["a specific indie game", "a serious ramen bowl set"]
+    },
+    "hidden_truth": {
+      "would_love": ["a specific indie game he's mentioned wanting", "a proper tonkotsu ramen kit", "an art book from a game he loves"],
+      "would_return": ["a generic AAA game he'd never pick", "a gift card that ignores how well I know him"],
+      "already_has": ["a current-gen console"]
+    },
+    "occasion": "birthday", "budget": {"min": 25, "max": 80}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "playing guitar", "confidence": 0.85, "evidence": "gigs at open mics", "polarity": "loves"}],
+      "already_owns": [{"value": "a decent acoustic guitar and basic gear", "confidence": 0.8}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "consumables-and-upgrades-not-a-new-instrument", "confidence": 0.7},
+      "hobbies": "guitar, songwriting, open-mic nights",
+      "music_taste": "folk, blues",
+      "favorite_brands": ["Fender", "Ernie Ball"],
+      "food_preferences": "no restrictions",
+      "clothing_sizes": {"top": "M", "bottom": "32", "shoe": "10"},
+      "pronouns": "they/them",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["musician", "hobbyist-upgrading"],
+      "wishlist_items": ["a nice capo/strings/pedal", "a songwriting notebook"]
+    },
+    "hidden_truth": {
+      "would_love": ["a quality effects pedal or premium strings", "a lesson with a local pro", "a good songwriting journal"],
+      "would_return": ["a cheap beginner guitar (they already have a good one)", "a novelty guitar-shaped gadget"],
+      "already_has": ["a decent acoustic guitar and basic gear"]
+    },
+    "occasion": "holiday", "budget": {"min": 30, "max": 120}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "literary fiction and book club", "confidence": 0.9, "evidence": "reads ~50 books a year", "polarity": "loves"}],
+      "already_owns": [{"value": "an e-reader", "confidence": 0.8}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "beautiful-editions-and-bookish-experiences", "confidence": 0.7},
+      "hobbies": "reading, running a monthly book club, annotating margins",
+      "music_taste": "classical while reading",
+      "favorite_brands": ["indie bookstores", "Persephone/NYRB editions"],
+      "food_preferences": "tea and biscuits",
+      "clothing_sizes": {"top": "M", "bottom": "12", "shoe": "8"},
+      "pronouns": "she/her",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["avid-reader", "owns-an-ereader"],
+      "wishlist_items": ["a beautiful hardcover edition", "an indie bookstore gift card"]
+    },
+    "hidden_truth": {
+      "would_love": ["a beautiful special-edition hardcover of a favorite", "an indie bookstore membership/gift card", "a literary-themed enamel pin or bookmark set"],
+      "would_return": ["a generic bestseller she's already read", "another e-reader or e-reader case"],
+      "already_has": ["an e-reader"]
+    },
+    "occasion": "birthday", "budget": {"min": 20, "max": 70}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "cooking and hosting", "confidence": 0.85, "evidence": "hosts big family meals", "polarity": "loves"}],
+      "already_owns": [{"value": "a well-stocked kitchen", "confidence": 0.7}],
+      "constraints": [{"value": "halal", "type": "dietary", "confidence": 0.95}],
+      "personality": {"gift_style_hint": "quality-food-and-hosting-upgrades", "confidence": 0.7},
+      "hobbies": "cooking for Eid gatherings, hosting, trying spice blends",
+      "music_taste": "no strong gift relevance",
+      "favorite_brands": ["specialty spice shops"],
+      "food_preferences": "halal — no pork, no alcohol in food gifts",
+      "clothing_sizes": {"top": "L", "bottom": "34", "shoe": "10"},
+      "pronouns": "he/him",
+      "allergens": [],
+      "dietary_restrictions": ["halal"],
+      "tags": ["religious-observance", "host"],
+      "wishlist_items": ["a premium spice blend set", "a nice serving platter"]
+    },
+    "hidden_truth": {
+      "would_love": ["a premium halal-friendly spice/saffron set", "a beautiful serving platter for gatherings", "a specialty dessert (halal) for the table"],
+      "would_return": ["anything with pork or alcohol (violates halal)", "a wine/charcuterie hamper", "another basic kitchen gadget"],
+      "already_has": ["a well-stocked kitchen"]
+    },
+    "occasion": "eid",
+    "budget": {"min": 30, "max": 100}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "watercolor painting", "confidence": 0.85, "evidence": "posts studio shots", "polarity": "loves"}],
+      "already_owns": [{"value": "a student-grade paint set", "confidence": 0.8}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "quality-materials-upgrade", "confidence": 0.7},
+      "hobbies": "watercolor, urban sketching, small art fairs",
+      "music_taste": "ambient, jazz",
+      "favorite_brands": ["Winsor & Newton", "Arches paper"],
+      "food_preferences": "no restrictions",
+      "clothing_sizes": {"top": "S", "bottom": "28", "shoe": "8"},
+      "pronouns": "she/her",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["artist", "hobbyist-upgrading"],
+      "wishlist_items": ["professional-grade paints", "good cotton paper"]
+    },
+    "hidden_truth": {
+      "would_love": ["professional-grade watercolor pans (upgrade from student paints)", "a block of quality cotton paper", "a sketching workshop"],
+      "would_return": ["another student-grade set", "a paint-by-numbers kit"],
+      "already_has": ["a student-grade paint set"]
+    },
+    "occasion": "birthday", "budget": {"min": 25, "max": 90}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "die-hard fan of one specific soccer club", "confidence": 0.9, "evidence": "watches every match", "polarity": "loves"}],
+      "already_owns": [{"value": "the current home jersey", "confidence": 0.85}],
+      "constraints": [],
+      "personality": {"gift_style_hint": "specific-club-not-generic-sports", "confidence": 0.75},
+      "hobbies": "following his club, five-a-side on weekends",
+      "music_taste": "terrace chants, hip-hop",
+      "favorite_brands": ["the club's official shop"],
+      "food_preferences": "matchday snacks",
+      "clothing_sizes": {"top": "L", "bottom": "34", "shoe": "11"},
+      "pronouns": "he/him",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["sports-superfan", "specific-team-loyalty"],
+      "wishlist_items": ["a retro club scarf", "tickets to a match"]
+    },
+    "hidden_truth": {
+      "would_love": ["a ticket to see his club play", "a retro/vintage jersey or scarf of his club", "a signed club memento"],
+      "would_return": ["a rival club's merch", "generic 'sports fan' merchandise not tied to his club", "another current-season jersey he owns"],
+      "already_has": ["the current home jersey"]
+    },
+    "occasion": "birthday", "budget": {"min": 30, "max": 120}
+  },
+  {
+    "profile": {
+      "interests": [{"value": "unclear — my kid's 3rd-grade teacher", "confidence": 0.35, "evidence": "know her only through class newsletters", "polarity": "unknown"}],
+      "already_owns": [{"value": "a drawer full of 'World's Best Teacher' mugs, guaranteed", "confidence": 0.8}],
+      "constraints": [{"value": "keep it appropriate — a parent gifting a teacher", "type": "values", "confidence": 0.8}],
+      "personality": {"gift_style_hint": "useful-or-a-treat-not-more-clutter", "confidence": 0.5, "difficulty": "hard"},
+      "hobbies": "newsletter mentions she loves her morning coffee and is always buying classroom supplies herself",
+      "music_taste": "unknown",
+      "favorite_brands": ["buys her own classroom supplies"],
+      "food_preferences": "coffee drinker",
+      "clothing_sizes": {"top": "unknown", "bottom": "unknown", "shoe": "unknown"},
+      "pronouns": "she/her",
+      "allergens": [],
+      "dietary_restrictions": [],
+      "tags": ["teacher-gift", "appropriate-distance", "difficulty:hard"],
+      "wishlist_items": []
+    },
+    "hidden_truth": {
+      "would_love": ["a gift card to a coffee shop or the classroom-supply store she uses", "a genuinely useful classroom item she'd otherwise buy herself", "a heartfelt note from the kid"],
+      "would_return": ["another 'World's Best Teacher' mug (she has a drawer full)", "a scented candle / generic teacher trinket", "anything overly personal or expensive that oversteps"],
+      "already_has": ["a drawer full of 'World's Best Teacher' mugs, guaranteed"]
+    },
+    "occasion": "end-of-year thank you", "budget": {"min": 15, "max": 40}
+  }
+]

@@ -1,0 +1,67 @@
+name: deploy
+
+# CU2-standard deploy: GitHub's runners do the az work (no local CLI needed).
+# Push to main → build image to cu2registry → create/update the Azure Container App.
+# Gateway-wired (no raw Anthropic key). Manual trigger available via workflow_dispatch.
+on:
+  push:
+    branches: [main]
+    paths: ['**.py', 'requirements.txt', 'Dockerfile', '.github/workflows/deploy.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  ACR: cu2registry
+  IMAGE: gandalf-protocol
+  RESOURCE_GROUP: rg-cu2-forge
+  APP: ca-gandalf-protocol
+  GATEWAY_URL: https://ca-litellm-gateway.wittyflower-1831f2a2.westus2.azurecontainerapps.io
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure login (service principal)
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}   # `az ad sp create-for-rbac --sdk-auth` JSON
+
+      - name: Build image in ACR (amd64)
+        run: |
+          az acr build -r "$ACR" --platform linux/amd64 \
+            -t "$IMAGE:${{ github.sha }}" -t "$IMAGE:latest" .
+
+      - name: Create or update the Container App
+        run: |
+          IMG="$ACR.azurecr.io/$IMAGE:${{ github.sha }}"
+          if az containerapp show -n "$APP" -g "$RESOURCE_GROUP" >/dev/null 2>&1; then
+            az containerapp update -n "$APP" -g "$RESOURCE_GROUP" --image "$IMG"
+          else
+            ENV=$(az containerapp env list -g "$RESOURCE_GROUP" --query "[0].name" -o tsv)
+            echo "using Container Apps environment: $ENV"
+            # ACR admin creds for pull (a contributor SP can't assign the AcrPull role).
+            az acr update -n "$ACR" --admin-enabled true -o none
+            ACR_USER=$(az acr credential show -n "$ACR" --query username -o tsv)
+            ACR_PASS=$(az acr credential show -n "$ACR" --query "passwords[0].value" -o tsv)
+            az containerapp create -n "$APP" -g "$RESOURCE_GROUP" \
+              --environment "$ENV" --image "$IMG" \
+              --registry-server "$ACR.azurecr.io" \
+              --registry-username "$ACR_USER" --registry-password "$ACR_PASS" \
+              --target-port 5000 --ingress external \
+              --min-replicas 1 --max-replicas 1 --cpu 1 --memory 2Gi \
+              --secrets "anthropic-key=${{ secrets.GANDALF_GATEWAY_KEY }}" \
+                        "storage-conn=${{ secrets.GANDALF_STORAGE_CONN }}" \
+              --env-vars "ANTHROPIC_BASE_URL=$GATEWAY_URL" \
+                         "ANTHROPIC_API_KEY=secretref:anthropic-key" \
+                         "AZURE_STORAGE_CONNECTION_STRING=secretref:storage-conn" \
+                         "PARALLEL_WORKERS=8"
+          fi
+
+      - name: Show URL
+        run: |
+          echo "Deployed: https://$(az containerapp show -n "$APP" -g "$RESOURCE_GROUP" \
+            --query properties.configuration.ingress.fqdn -o tsv)"

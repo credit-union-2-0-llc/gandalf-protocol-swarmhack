@@ -1,0 +1,131 @@
+{
+  "_readme": "Judge-calibration gold set (#5, Jasper). run_evals.py measures the judge's Cohen's κ vs these labels (want ≥0.60) and asserts every label_good=false example scores <0.40. Examples are grounded in the held-out personas (seed_personas.json) — Violet contributed these from the hidden_truth answer keys. 14 examples span good/bad × obvious/surprising/constraint-violating/already-owned. Expand as needed.",
+  "examples": [
+    {
+      "label_good": true,
+      "profile": {"interests": [{"value": "trail running"}], "already_owns": [{"value": "GPS watch"}], "constraints": [{"value": "vegan", "type": "dietary"}]},
+      "hidden_truth": {"would_love": ["a trail race entry", "merino running socks"], "would_return": ["another water bottle"], "already_has": ["GPS watch"]},
+      "occasion": "birthday", "budget": {"min": 30, "max": 120},
+      "gifts": [{"name": "Local trail race entry + merino running socks", "category": "experience", "price": 85, "reasoning": "hits the trail-running passion with an experience, not another gadget she owns"}],
+      "verdict": "delight",
+      "note": "great: hits would_love, an experience not a device, respects budget & vegan"
+    },
+    {
+      "label_good": true,
+      "profile": {"interests": [{"value": "cooking"}], "already_owns": [{"value": "stand mixer"}], "constraints": [{"value": "shellfish allergy", "type": "allergen"}]},
+      "hidden_truth": {"would_love": ["a knife skills class", "single-origin olive oil set"], "would_return": ["novelty apron"], "already_has": ["stand mixer"]},
+      "occasion": "anniversary", "budget": {"min": 50, "max": 200},
+      "gifts": [{"name": "Hands-on knife skills class for two", "category": "experience", "price": 120, "reasoning": "an experience that builds on real cooking skill; not another appliance he already has"}],
+      "verdict": "delight",
+      "note": "great: would_love match, non-obvious, avoids the owned appliance"
+    },
+    {
+      "label_good": true,
+      "profile": {"interests": [{"value": "vinyl records"}], "already_owns": [], "constraints": [{"value": "hates clutter", "type": "values"}]},
+      "hidden_truth": {"would_love": ["a rare pressing of a favorite album", "a concert ticket"], "would_return": ["generic bluetooth speaker"], "already_has": []},
+      "occasion": "holiday", "budget": {"min": 40, "max": 150},
+      "gifts": [{"name": "Rare pressing of a favorite album", "category": "collectible", "price": 60, "reasoning": "matches the collection and respects the anti-clutter value — one meaningful item, not stuff"}],
+      "verdict": "delight",
+      "note": "great: would_love, respects the hates-clutter constraint"
+    },
+    {
+      "label_good": true,
+      "profile": {"interests": [{"value": "new parenthood"}], "already_owns": [{"value": "baby monitor"}], "constraints": []},
+      "hidden_truth": {"would_love": ["noise-cancelling headphones", "a meal delivery gift card"], "would_return": ["a scented candle"], "already_has": ["baby monitor"]},
+      "occasion": "new baby", "budget": {"min": 40, "max": 120},
+      "gifts": [{"name": "3-month meal delivery gift card", "category": "service", "price": 90, "reasoning": "protects a new parent's scarcest resource — time — instead of adding another object"}],
+      "verdict": "delight",
+      "note": "great: would_love, insightful (time > trinkets for a new parent)"
+    },
+    {
+      "label_good": true,
+      "profile": {"interests": [{"value": "woodworking"}], "already_owns": [{"value": "full basic hand-tool collection"}], "constraints": []},
+      "hidden_truth": {"would_love": ["a premium chisel set", "a woodworking masterclass"], "would_return": ["a generic retiree mug"], "already_has": ["full basic hand-tool collection"]},
+      "occasion": "retirement", "budget": {"min": 50, "max": 200},
+      "gifts": [{"name": "Premium hand-plane he wouldn't splurge on himself", "category": "tool", "price": 160, "reasoning": "an upgrade over the basics he owns; a hobby he now has time for"}],
+      "verdict": "delight",
+      "note": "great: would_love, upgrades (not duplicates) what he owns, fits new free time"
+    },
+    {
+      "label_good": true,
+      "profile": {"interests": [{"value": "houseplants"}], "already_owns": [{"value": "basic starter tool set"}], "constraints": [{"value": "small rental, no drilling", "type": "values"}]},
+      "hidden_truth": {"would_love": ["a large low-maintenance statement plant", "renter-friendly no-drill shelving"], "would_return": ["anything requiring wall-drilling"], "already_has": ["basic starter tool set"]},
+      "occasion": "housewarming", "budget": {"min": 30, "max": 90},
+      "gifts": [{"name": "Freestanding no-drill shelf + a statement pothos", "category": "home", "price": 75, "reasoning": "matches the new space and the plant hobby while respecting the no-drilling rental rule"}],
+      "verdict": "delight",
+      "note": "great: would_love, explicitly respects the no-drill constraint"
+    },
+    {
+      "label_good": true,
+      "profile": {"interests": [{"value": "cycling"}], "already_owns": [{"value": "commuter bike and helmet"}], "constraints": [{"value": "pescatarian", "type": "dietary"}]},
+      "hidden_truth": {"would_love": ["waterproof panniers", "quality bike lights"], "would_return": ["a second helmet"], "already_has": ["commuter bike and helmet"]},
+      "occasion": "birthday", "budget": {"min": 40, "max": 130},
+      "gifts": [{"name": "Waterproof panniers for year-round commuting", "category": "gear", "price": 110, "reasoning": "a practical upgrade for a daily commuter; not a duplicate of gear owned"}],
+      "verdict": "delight",
+      "note": "great: would_love, practical upgrade, avoids owned gear"
+    },
+    {
+      "label_good": false,
+      "profile": {"interests": [{"value": "trail running"}], "already_owns": [{"value": "GPS watch"}], "constraints": [{"value": "vegan", "type": "dietary"}]},
+      "hidden_truth": {"would_love": ["a trail race entry"], "would_return": ["another GPS watch"], "already_has": ["GPS watch"]},
+      "occasion": "birthday", "budget": {"min": 30, "max": 120},
+      "gifts": [{"name": "GPS running watch", "category": "electronics", "price": 110, "reasoning": "runners like watches"}],
+      "verdict": "owns_it",
+      "note": "bad: already owns a GPS watch + lazy generic reasoning → must score <0.4"
+    },
+    {
+      "label_good": false,
+      "profile": {"interests": [{"value": "trail running"}], "already_owns": [], "constraints": [{"value": "vegan", "type": "dietary"}]},
+      "hidden_truth": {"would_love": ["a trail race entry"], "would_return": ["leather goods"], "already_has": []},
+      "occasion": "birthday", "budget": {"min": 30, "max": 120},
+      "gifts": [{"name": "Leather running belt", "category": "accessory", "price": 45, "reasoning": "durable and practical for runs"}],
+      "verdict": "return",
+      "note": "bad: leather violates the vegan constraint → must score <0.4"
+    },
+    {
+      "label_good": false,
+      "profile": {"interests": [{"value": "cooking"}], "already_owns": [{"value": "stand mixer"}], "constraints": [{"value": "shellfish allergy", "type": "allergen"}]},
+      "hidden_truth": {"would_love": ["a knife skills class"], "would_return": ["shellfish-based food gifts"], "already_has": ["stand mixer"]},
+      "occasion": "anniversary", "budget": {"min": 50, "max": 200},
+      "gifts": [{"name": "Gourmet shrimp & crab tasting box", "category": "food", "price": 90, "reasoning": "a foodie will love a seafood treat"}],
+      "verdict": "return",
+      "note": "bad: shellfish violates a stated allergy → dangerous miss, must score <0.4"
+    },
+    {
+      "label_good": false,
+      "profile": {"interests": [{"value": "gaming"}], "already_owns": [{"value": "gaming headset"}], "constraints": [{"value": "nut allergy", "type": "allergen"}]},
+      "hidden_truth": {"would_love": ["a mechanical keyboard"], "would_return": ["anything with nuts"], "already_has": ["gaming headset"]},
+      "occasion": "birthday", "budget": {"min": 20, "max": 80},
+      "gifts": [{"name": "Gourmet mixed-nuts snack tower", "category": "food", "price": 35, "reasoning": "a fun snack while gaming"}],
+      "verdict": "return",
+      "note": "bad: nuts violate the allergy → must score <0.4"
+    },
+    {
+      "label_good": false,
+      "profile": {"interests": [{"value": "coffee culture"}], "already_owns": [{"value": "Stanley cup"}], "constraints": [{"value": "gluten-free", "type": "dietary"}]},
+      "hidden_truth": {"would_love": ["specialty coffee subscription"], "would_return": ["gluten-heavy baked goods", "another tumbler"], "already_has": ["Stanley cup"]},
+      "occasion": "coworker gift exchange", "budget": {"min": 15, "max": 25},
+      "gifts": [{"name": "Artisan sourdough bread basket", "category": "food", "price": 22, "reasoning": "everyone loves fresh bread"}],
+      "verdict": "return",
+      "note": "bad: gluten violates the gluten-free constraint → must score <0.4"
+    },
+    {
+      "label_good": false,
+      "profile": {"interests": [{"value": "golf"}], "already_owns": [{"value": "golf rangefinder"}], "constraints": []},
+      "hidden_truth": {"would_love": ["premium golf balls"], "would_return": ["a second rangefinder"], "already_has": ["golf rangefinder"]},
+      "occasion": "father's day", "budget": {"min": 30, "max": 100},
+      "gifts": [{"name": "Golf rangefinder", "category": "electronics", "price": 95, "reasoning": "golfers use rangefinders"}],
+      "verdict": "owns_it",
+      "note": "bad: already owns a rangefinder → duplicate, must score <0.4"
+    },
+    {
+      "label_good": false,
+      "profile": {"interests": [{"value": "tea culture"}], "already_owns": [{"value": "electric kettle"}], "constraints": [{"value": "caffeine-sensitive", "type": "dietary"}]},
+      "hidden_truth": {"would_love": ["caffeine-free herbal tea sampler"], "would_return": ["high-caffeine coffee", "a second kettle"], "already_has": ["electric kettle"]},
+      "occasion": "coworker gift exchange", "budget": {"min": 15, "max": 30},
+      "gifts": [{"name": "Extra-strong espresso coffee sampler", "category": "food", "price": 24, "reasoning": "a hot-drink lover will enjoy strong coffee"}],
+      "verdict": "return",
+      "note": "bad: high-caffeine contradicts caffeine-sensitivity + she's a tea (not coffee) person → must score <0.4"
+    }
+  ]
+}

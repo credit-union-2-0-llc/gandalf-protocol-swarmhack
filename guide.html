@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gandalf Protocol — how it works</title>
+<style>
+  :root{
+    --ink:#0e1116; --panel:#151b23; --line:#252d38;
+    --fg:#e7ebf1; --muted:#9aa6b6; --faint:#6b7686;
+    --swarm:#33cc88; --solo:#e0645f; --signal:#4aa3ff; --accent:var(--swarm);
+    --maxw:940px;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --ink:#f7f8fa; --panel:#ffffff; --line:#e2e6ec;
+      --fg:#141a22; --muted:#4d5766; --faint:#8792a1;
+      --swarm:#1c9c63; --solo:#c94a45; --signal:#2f7fe0; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ink);color:var(--fg);
+    font:400 17px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+  h1,h2,h3{text-wrap:balance;letter-spacing:-0.02em;font-weight:800;line-height:1.1}
+  a{color:var(--signal);text-decoration:none} a:hover{text-decoration:underline}
+  .eyebrow{font:600 12px/1 ui-monospace,monospace;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent)}
+  hr{border:0;border-top:1px solid var(--line);margin:0}
+  nav{border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;padding-top:16px;padding-bottom:16px}
+  nav b{font-weight:800;letter-spacing:-.02em}
+  nav a.back{font:600 13px/1 ui-monospace,monospace;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:8px 14px}
+  header{background:radial-gradient(120% 90% at 80% -10%, color-mix(in srgb,var(--swarm) 9%,transparent), transparent 60%);border-bottom:1px solid var(--line)}
+  .hero{padding:64px 0 52px;display:grid;gap:30px}
+  .hero h1{font-size:clamp(32px,5.5vw,56px);margin:0} .hero h1 .g{color:var(--swarm)}
+  .lede{font-size:clamp(18px,2.4vw,22px);color:var(--muted);max-width:60ch;margin:0}
+  .tags{display:flex;gap:8px;flex-wrap:wrap}
+  .tag{font:600 12px/1 ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);border:1px solid var(--line);border-radius:999px;padding:6px 11px}
+  .curvewrap{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .legend{display:flex;gap:22px;flex-wrap:wrap;margin-top:10px;font:600 13px/1 ui-monospace,monospace}
+  .legend span{display:inline-flex;align-items:center;gap:8px;color:var(--muted)}
+  .dot{width:11px;height:3px;border-radius:2px;display:inline-block}
+  section{padding:52px 0} section h2{font-size:clamp(24px,3.6vw,32px);margin:6px 0 16px}
+  .say{color:var(--muted);max-width:65ch}
+  .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:24px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
+  .card h3{font-size:18px;margin:0 0 6px;display:flex;align-items:baseline;gap:9px}
+  .card .who{font:600 11px/1 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+  .card p{margin:0;color:var(--muted);font-size:15px} .card .role{color:var(--fg);font-weight:600}
+  /* dependency-free loop diagram */
+  .flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px;margin-top:24px}
+  .step{flex:1 1 130px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;position:relative}
+  .step .n{font:600 11px/1 ui-monospace,monospace;color:var(--accent);letter-spacing:.1em}
+  .step b{display:block;margin-top:6px;font-size:15px} .step small{color:var(--muted)}
+  .arrow{align-self:center;color:var(--faint);font-size:20px}
+  .loopnote{margin-top:12px;font:600 12px/1 ui-monospace,monospace;color:var(--faint)}
+  .proof{display:grid;gap:14px;grid-template-columns:repeat(3,1fr);margin-top:22px}
+  @media(max-width:760px){.proof{grid-template-columns:1fr}}
+  .mini{width:100%;height:78px;display:block}
+  figure{margin:0}
+  .runrow{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin-top:20px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .stat b{display:block;font:800 26px/1 ui-monospace,monospace;letter-spacing:-.02em}
+  .stat span{color:var(--muted);font-size:14px}
+  blockquote{margin:24px 0 0;padding:20px 24px;border-left:3px solid var(--accent);background:var(--panel);border-radius:0 12px 12px 0;font-size:19px}
+  .pill{font:600 11px/1 ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border-radius:999px;border:1px solid var(--line)}
+  .pill.on{color:var(--swarm);border-color:color-mix(in srgb,var(--swarm) 45%,var(--line))}
+  footer{border-top:1px solid var(--line);padding:32px 0 52px;color:var(--faint);font-size:14px}
+  @media (prefers-reduced-motion: reduce){.draw{animation:none!important;stroke-dashoffset:0!important}}
+</style>
+</head>
+<body>
+<nav><div class="wrap"><b>🧙 Gandalf Protocol</b><a class="back" href="/">← dashboard</a></div></nav>
+
+<header><div class="wrap hero">
+  <div class="tags"><span class="tag">Self-Evolving Agents</span><span class="tag">Multi-agent</span><span class="tag mono">gandalf-protocol</span></div>
+  <div>
+    <p class="eyebrow">A learning engine, not a recommender</p>
+    <h1>Every team here hand-tunes a frozen model.<br><span class="g">Ours manufactures its own training data</span> — and gets better overnight.</h1>
+  </div>
+  <p class="lede">Gandalf plays against simulated humans, scores its own attempts, shares what works across a swarm of agents, and drills its weak spots. No fine-tuning. The proof is one chart: a solo agent stays flat; a swarm that shares climbs.</p>
+  <div class="curvewrap">
+    <svg class="mini" viewBox="0 0 720 150" preserveAspectRatio="none" aria-label="Solo flat, swarm climbs" style="height:200px">
+      <g stroke-width="1" stroke="var(--line)"><line x1="0" y1="37" x2="720" y2="37"/><line x1="0" y1="75" x2="720" y2="75"/><line x1="0" y1="113" x2="720" y2="113"/></g>
+      <polyline class="draw" fill="none" stroke="var(--solo)" stroke-width="3" stroke-linejoin="round" points="0,98 90,92 180,100 270,95 360,97 450,93 540,99 630,94 720,96"/>
+      <polyline class="draw" fill="none" stroke="var(--swarm)" stroke-width="3.5" stroke-linejoin="round" points="0,99 90,88 180,84 270,72 360,66 450,55 540,48 630,40 720,33"/>
+    </svg>
+    <div class="legend"><span><i class="dot" style="background:var(--solo)"></i> solo agent — no sharing</span><span><i class="dot" style="background:var(--swarm)"></i> swarm + distillation</span><span class="mono" style="color:var(--faint);margin-left:auto">thoughtfulness ↑ over rounds →</span></div>
+  </div>
+</div></header>
+
+<section class="wrap">
+  <p class="eyebrow">The idea</p>
+  <h2>Four agents, a simulated world, a judge, and a loop</h2>
+  <p class="say">Learning happens when you explore diverse strategies in parallel, measure what works, share the wins, and focus on weak spots. A frozen model does none of that. Gandalf wires all four into one loop — and because "the policy" is a growing <b>playbook</b> of lessons injected into the agents' prompts, it learns with zero fine-tuning.</p>
+  <div class="grid">
+    <div class="card"><h3>The Swarm <span class="who">policy</span></h3><p><span class="role">Four agents that disagree.</span> Each explores a different strategy — safe, bold, sentimental, novelty. Winners are distilled into a shared playbook each round.</p></div>
+    <div class="card"><h3>The World <span class="who">data factory</span></h3><p><span class="role">Simulated recipients.</span> A public profile the agents see, and a private <span class="mono">hidden_truth</span> answer key they don't. It reacts honestly to every gift.</p></div>
+    <div class="card"><h3>The Signal <span class="who">reward + curriculum</span></h3><p><span class="role">A judge and a coach.</span> The judge scores <em>thoughtfulness</em> (not "did they buy it"); the coach targets the weakest category next round.</p></div>
+    <div class="card"><h3>The Rig <span class="who">orchestration</span></h3><p><span class="role">The loop + storage + proof.</span> Runs every episode, persists it, renders the charts that prove learning happened.</p></div>
+    <div class="card" style="grid-column:1/-1;border-color:color-mix(in srgb,var(--swarm) 30%,var(--line))"><h3>The Playbook <span class="who">the "policy"</span></h3><p>We don't fine-tune. Learning <em>is</em> this list of lessons growing — distilled from the best episodes, retrieved by relevance, injected into every agent's prompt next round. A better playbook is a smarter swarm.</p></div>
+  </div>
+</section>
+
+<hr>
+<section class="wrap">
+  <p class="eyebrow">The loop</p>
+  <h2>One round, repeated until it learns</h2>
+  <p class="say">The same loop runs for a lone agent (the baseline) and for the swarm with distillation. Running both into one store, then plotting both curves, is the ablation.</p>
+  <div class="flow">
+    <div class="step"><span class="n">01</span><b>Coach</b><small>pick the weakest area</small></div>
+    <div class="arrow">→</div>
+    <div class="step"><span class="n">02</span><b>World</b><small>generate personas</small></div>
+    <div class="arrow">→</div>
+    <div class="step"><span class="n">03</span><b>Swarm</b><small>each agent proposes</small></div>
+    <div class="arrow">→</div>
+    <div class="step"><span class="n">04</span><b>Judge</b><small>score thoughtfulness</small></div>
+    <div class="arrow">→</div>
+    <div class="step"><span class="n">05</span><b>Distill</b><small>winners → playbook grows</small></div>
+  </div>
+  <p class="loopnote">↺ the grown playbook is injected into the agents' prompts next round — that's the learning.</p>
+</section>
+
+<hr>
+<section class="wrap">
+  <p class="eyebrow">The proof</p>
+  <h2>Three charts — and one is honest about cheating</h2>
+  <p class="say">We don't assert that it learns — we show it. The third chart is the one we're proudest of: it's the instrument that catches the model gaming its own judge.</p>
+  <div class="proof">
+    <figure class="card"><svg class="mini" viewBox="0 0 200 78"><polyline class="draw" fill="none" stroke="var(--swarm)" stroke-width="3" points="4,66 40,58 76,52 112,42 148,34 196,22"/></svg><h3 style="font-size:16px;margin:0">Learning curve</h3><p style="color:var(--muted);font-size:14px;margin:0">Thoughtfulness climbs as the playbook grows. The core claim.</p></figure>
+    <figure class="card"><svg class="mini" viewBox="0 0 200 78"><polyline class="draw" fill="none" stroke="var(--solo)" stroke-width="3" points="4,52 50,49 100,53 150,50 196,51"/><polyline class="draw" fill="none" stroke="var(--swarm)" stroke-width="3" points="4,53 50,45 100,38 150,30 196,20"/></svg><h3 style="font-size:16px;margin:0">The ablation</h3><p style="color:var(--muted);font-size:14px;margin:0">Solo flat, swarm steeper. Proves <em>collective</em> learning, not just learning.</p></figure>
+    <figure class="card"><svg class="mini" viewBox="0 0 200 78"><polyline class="draw" fill="none" stroke="var(--signal)" stroke-width="3" points="4,60 50,46 100,44 150,34 196,30"/><g fill="var(--signal)"><circle cx="4" cy="60" r="3.2"/><circle cx="50" cy="46" r="3.2"/><circle cx="100" cy="44" r="3.2"/><circle cx="150" cy="34" r="3.2"/><circle cx="196" cy="30" r="3.2"/></g></svg><h3 style="font-size:16px;margin:0">Held-out validation</h3><p style="color:var(--muted);font-size:14px;margin:0">Scored on real cases it never trained on. If training climbs but this stays flat, the swarm is gaming the sim — and we'd say so.</p></figure>
+  </div>
+</section>
+
+<hr>
+<section class="wrap">
+  <p class="eyebrow">Beyond gifts</p>
+  <h2>One engine, many domains</h2>
+  <p class="say">Gifts are just the first domain. The loop is domain-neutral — swap the scenarios, the proposal, and the judge's rubric, and the same engine learns a new task.</p>
+  <div class="grid">
+    <div class="card"><h3>Gifts</h3><p>Recipient persona → a gift set → judged on thoughtfulness. <span class="pill on">live</span></p></div>
+    <div class="card"><h3>Fantasy football</h3><p>Matchup + roster → a weekly lineup → judged on the edge over chalk.</p></div>
+    <div class="card"><h3>Travel planner</h3><p>Traveler + budget → an itinerary → judged on fit, surprise, feasibility.</p></div>
+    <div class="card"><h3>Date-night planner</h3><p>A couple + a vibe → a plan → judged on delight and effort.</p></div>
+  </div>
+</section>
+
+<hr>
+<section class="wrap">
+  <p class="eyebrow">Under the hood</p>
+  <h2>How it actually runs</h2>
+  <div class="runrow">
+    <div class="stat"><b>4</b><span>diverse agents explore in parallel</span></div>
+    <div class="stat"><b>0</b><span>fine-tuning — learning is the playbook</span></div>
+    <div class="stat"><b>3</b><span>charts that are the whole submission</span></div>
+    <div class="stat"><b>1</b><span>loop, solo &amp; swarm, one store</span></div>
+  </div>
+  <p class="say" style="margin-top:22px">Real Claude, routed through a shared gateway (budget-capped, PII-screened). Deployed on Azure Container Apps — trigger a run from the <a href="/">dashboard</a> and watch the curve build live. Storage, retrieval, and the judge are pluggable; the never-cut trio (loop · ablation · validation) is guarded above everything else.</p>
+  <blockquote>"We didn't build a gift recommender in a weekend. We had one in production — we spent the weekend teaching it to learn."</blockquote>
+</section>
+
+<footer class="wrap">Gandalf Protocol · a self-play learning engine · gifts today, any judgment task next.<span class="mono" style="display:block;margin-top:8px;color:var(--faint)">Explore diverse strategies · measure what works · share the wins · drill the weak spots.</span></footer>
+
+<script>
+  window.addEventListener('load',()=>{document.querySelectorAll('polyline.draw').forEach((el,i)=>{try{const len=el.getTotalLength();el.style.strokeDasharray=len;el.style.strokeDashoffset=len;el.getBoundingClientRect();el.style.transition='stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1) '+(i*0.15)+'s';el.style.strokeDashoffset=0;}catch(e){}});});
+</script>
+</body>
+</html>

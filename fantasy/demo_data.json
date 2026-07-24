@@ -1,0 +1,299 @@
+{
+  "meta": {
+    "train_decisions": 8931,
+    "held_decisions": 3028,
+    "seasons_train": "2022-2024",
+    "season_held": 2025,
+    "roster_size": 12
+  },
+  "climb": [
+    {
+      "label": "naive\n(Recency)",
+      "ppg": 17.0,
+      "mae": 3.08,
+      "adopted": [
+        "Recency"
+      ]
+    },
+    {
+      "label": "+Season",
+      "ppg": 19.3,
+      "mae": 2.9,
+      "adopted": [
+        "Recency",
+        "Season"
+      ]
+    },
+    {
+      "label": "+Volume",
+      "ppg": 21.7,
+      "mae": 2.88,
+      "adopted": [
+        "Recency",
+        "Season",
+        "Volume"
+      ]
+    },
+    {
+      "label": "+Trend",
+      "ppg": 20.6,
+      "mae": 2.87,
+      "adopted": [
+        "Recency",
+        "Season",
+        "Volume",
+        "Trend"
+      ]
+    }
+  ],
+  "solo_ppg": 17.0,
+  "solo_mae": 3.08,
+  "swarm_ppg": 20.6,
+  "swarm_mae": 2.87,
+  "agents": {
+    "Recency": {
+      "team": [
+        {
+          "name": "Puka Nacua",
+          "pos": "WR",
+          "actual": 16.6
+        },
+        {
+          "name": "Amon-Ra St. Brown",
+          "pos": "WR",
+          "actual": 15.5
+        },
+        {
+          "name": "Jonathan Taylor",
+          "pos": "RB",
+          "actual": 24.4
+        },
+        {
+          "name": "Christian McCaffrey",
+          "pos": "RB",
+          "actual": 25.8
+        },
+        {
+          "name": "James Cook III",
+          "pos": "RB",
+          "actual": 15.9
+        }
+      ],
+      "ppg": 17.0
+    },
+    "Season": {
+      "team": [
+        {
+          "name": "Puka Nacua",
+          "pos": "WR",
+          "actual": 16.6
+        },
+        {
+          "name": "Josh Allen",
+          "pos": "QB",
+          "actual": 23.5
+        },
+        {
+          "name": "Christian McCaffrey",
+          "pos": "RB",
+          "actual": 25.8
+        },
+        {
+          "name": "Amon-Ra St. Brown",
+          "pos": "WR",
+          "actual": 15.5
+        },
+        {
+          "name": "Lamar Jackson",
+          "pos": "QB",
+          "actual": 9.1
+        }
+      ],
+      "ppg": 20.1
+    },
+    "Volume": {
+      "team": [
+        {
+          "name": "Christian McCaffrey",
+          "pos": "RB",
+          "actual": 25.8
+        },
+        {
+          "name": "Josh Jacobs",
+          "pos": "RB",
+          "actual": 15.0
+        },
+        {
+          "name": "Saquon Barkley",
+          "pos": "RB",
+          "actual": 13.8
+        },
+        {
+          "name": "Jonathan Taylor",
+          "pos": "RB",
+          "actual": 24.4
+        },
+        {
+          "name": "Bucky Irving",
+          "pos": "RB",
+          "actual": 3.6
+        }
+      ],
+      "ppg": 20.8
+    },
+    "Trend": {
+      "team": [
+        {
+          "name": "Quinshon Judkins",
+          "pos": "RB",
+          "actual": 11.9
+        },
+        {
+          "name": "Cam Skattebo",
+          "pos": "RB",
+          "actual": 8.2
+        },
+        {
+          "name": "De'Von Achane",
+          "pos": "RB",
+          "actual": 21.8
+        },
+        {
+          "name": "Alvin Kamara",
+          "pos": "RB",
+          "actual": 5.9
+        },
+        {
+          "name": "Mac Jones",
+          "pos": "QB",
+          "actual": 10.6
+        }
+      ],
+      "ppg": 13.3
+    }
+  },
+  "swarm_team": [
+    {
+      "name": "Puka Nacua",
+      "pos": "WR",
+      "actual": 16.6
+    },
+    {
+      "name": "Christian McCaffrey",
+      "pos": "RB",
+      "actual": 25.8
+    },
+    {
+      "name": "Jonathan Taylor",
+      "pos": "RB",
+      "actual": 24.4
+    },
+    {
+      "name": "James Cook III",
+      "pos": "RB",
+      "actual": 15.9
+    },
+    {
+      "name": "Bijan Robinson",
+      "pos": "RB",
+      "actual": 19.5
+    },
+    {
+      "name": "Josh Allen",
+      "pos": "QB",
+      "actual": 23.5
+    },
+    {
+      "name": "Amon-Ra St. Brown",
+      "pos": "WR",
+      "actual": 15.5
+    },
+    {
+      "name": "Lamar Jackson",
+      "pos": "QB",
+      "actual": 9.1
+    },
+    {
+      "name": "Patrick Mahomes",
+      "pos": "QB",
+      "actual": 20.5
+    },
+    {
+      "name": "Jalen Hurts",
+      "pos": "QB",
+      "actual": 18.2
+    },
+    {
+      "name": "Drake Maye",
+      "pos": "QB",
+      "actual": 19.5
+    },
+    {
+      "name": "Jahmyr Gibbs",
+      "pos": "RB",
+      "actual": 25.4
+    }
+  ],
+  "naive_team": [
+    {
+      "name": "Puka Nacua",
+      "pos": "WR",
+      "actual": 16.6
+    },
+    {
+      "name": "Amon-Ra St. Brown",
+      "pos": "WR",
+      "actual": 15.5
+    },
+    {
+      "name": "Jonathan Taylor",
+      "pos": "RB",
+      "actual": 24.4
+    },
+    {
+      "name": "Christian McCaffrey",
+      "pos": "RB",
+      "actual": 25.8
+    },
+    {
+      "name": "James Cook III",
+      "pos": "RB",
+      "actual": 15.9
+    },
+    {
+      "name": "George Pickens",
+      "pos": "WR",
+      "actual": 19.0
+    },
+    {
+      "name": "Drake Maye",
+      "pos": "QB",
+      "actual": 19.5
+    },
+    {
+      "name": "Dak Prescott",
+      "pos": "QB",
+      "actual": 20.7
+    },
+    {
+      "name": "Bijan Robinson",
+      "pos": "RB",
+      "actual": 19.5
+    },
+    {
+      "name": "Lamar Jackson",
+      "pos": "QB",
+      "actual": 9.1
+    },
+    {
+      "name": "Jahmyr Gibbs",
+      "pos": "RB",
+      "actual": 25.4
+    },
+    {
+      "name": "Rome Odunze",
+      "pos": "WR",
+      "actual": 7.4
+    }
+  ]
+}
