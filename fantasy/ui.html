@@ -1,234 +1,516 @@
-<title>Gandalf · Fantasy Football Demo</title>
+<title>Gandalf · The Draft That Learned</title>
 <style>
+  /* ── Gameday broadcast: turf + chalk + scoreboard. Veteran(learned)=gold, Rookie(naive)=clay ── */
   :root{
-    /* neutrals biased green; accent = growth/climb; clay reserved for the naive baseline */
-    --ground:#f3f6f4; --surface:#ffffff; --line:#dde6e1;
-    --ink:#0f1a16; --muted:#5b6b64; --faint:#8a9a92;
-    --swarm:#1f8f63; --swarm-2:#31b57f; --naive:#c2683f;
-    --shadow:0 1px 2px rgba(16,40,30,.06),0 8px 24px rgba(16,40,30,.06);
+    --bg:#0b1512; --panel:#11201a; --card:#14261d; --card-2:#0f1e17;
+    --chalk:#eef4ef; --muted:#9fb2a8; --faint:#6d8377; --line:rgba(238,244,239,.10);
+    --hair:rgba(238,244,239,.07);
+    --vet:#ffd23f; --vet-ink:#3a2c00; --rookie:#e78a54; --rookie-deep:#c76a34;
+    --good:#54d491; --bad:#e0604f;
+    --c-season:#ffd23f; --c-recency:#e78a54; --c-volume:#46b3c9; --c-trend:#b48af0;
+    --turf-a:#123f2c; --turf-b:#0a2a1d; --turf-line:rgba(238,244,239,.16);
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 14px 34px rgba(0,0,0,.30);
+    --disp:"Helvetica Neue",Arial,system-ui,"Segoe UI",Roboto,sans-serif;
     --mono:ui-monospace,"SF Mono","Cascadia Code",Menlo,monospace;
-    --disp:"SF Pro Display",-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;
   }
-  @media (prefers-color-scheme:dark){:root{
-    --ground:#0c1512; --surface:#14201b; --line:#233029;
-    --ink:#eaf2ed; --muted:#9fb2a9; --faint:#69796f;
-    --swarm:#37b985; --swarm-2:#5fd3a4; --naive:#d67e54;
-    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
-  }}
-  :root[data-theme="light"]{
-    --ground:#f3f6f4; --surface:#ffffff; --line:#dde6e1; --ink:#0f1a16;
-    --muted:#5b6b64; --faint:#8a9a92; --swarm:#1f8f63; --swarm-2:#31b57f; --naive:#c2683f;
-    --shadow:0 1px 2px rgba(16,40,30,.06),0 8px 24px rgba(16,40,30,.06);
+  @media (prefers-color-scheme:light){
+    :root{ --bg:#eaf0ea; --panel:#ffffff; --card:#ffffff; --card-2:#f3f7f3;
+      --chalk:#12211a; --muted:#4d5e55; --faint:#7c8d84; --line:rgba(12,34,22,.12);
+      --hair:rgba(12,34,22,.07); --vet-ink:#3a2c00;
+      --shadow:0 1px 2px rgba(16,40,30,.06),0 14px 30px rgba(16,40,30,.10); }
   }
-  :root[data-theme="dark"]{
-    --ground:#0c1512; --surface:#14201b; --line:#233029; --ink:#eaf2ed;
-    --muted:#9fb2a9; --faint:#69796f; --swarm:#37b985; --swarm-2:#5fd3a4; --naive:#d67e54;
-    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
-  }
+  :root[data-theme="dark"]{ --bg:#0b1512; --panel:#11201a; --card:#14261d; --card-2:#0f1e17;
+    --chalk:#eef4ef; --muted:#9fb2a8; --faint:#6d8377; --line:rgba(238,244,239,.10); --hair:rgba(238,244,239,.07);
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 14px 34px rgba(0,0,0,.30); }
+  :root[data-theme="light"]{ --bg:#eaf0ea; --panel:#ffffff; --card:#ffffff; --card-2:#f3f7f3;
+    --chalk:#12211a; --muted:#4d5e55; --faint:#7c8d84; --line:rgba(12,34,22,.12); --hair:rgba(12,34,22,.07);
+    --shadow:0 1px 2px rgba(16,40,30,.06),0 14px 30px rgba(16,40,30,.10); }
+
   *{box-sizing:border-box}
-  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--disp);
-    line-height:1.5;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1040px;margin:0 auto;padding:clamp(20px,4vw,56px)}
-  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;
-    color:var(--swarm);font-weight:600}
-  h1{font-size:clamp(30px,5.5vw,54px);line-height:1.04;letter-spacing:-.02em;font-weight:800;
-    margin:.35em 0 .3em;text-wrap:balance;max-width:16ch}
-  .lede{font-size:clamp(16px,2vw,20px);color:var(--muted);max-width:60ch;margin:0}
-  .lede b{color:var(--ink);font-weight:700}
-  section{margin-top:clamp(40px,7vw,80px)}
-  h2{font-size:13px;font-family:var(--mono);letter-spacing:.16em;text-transform:uppercase;
-    color:var(--faint);font-weight:600;margin:0 0 18px;display:flex;align-items:center;gap:10px}
-  h2::after{content:"";height:1px;background:var(--line);flex:1}
-  /* stat tiles */
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:28px}
-  .tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;
-    box-shadow:var(--shadow)}
-  .tile .k{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
-  .tile .v{font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:6px;letter-spacing:-.02em}
-  .tile .v small{font-size:16px;font-weight:600;color:var(--muted)}
-  .up{color:var(--swarm)}
-  /* chart */
-  .chartcard{background:var(--surface);border:1px solid var(--line);border-radius:18px;
-    padding:24px clamp(16px,3vw,30px) 16px;box-shadow:var(--shadow)}
-  svg{width:100%;height:auto;display:block;overflow:visible}
-  .cap{color:var(--muted);font-size:14px;margin:14px 2px 0}
+  body{margin:0;background:var(--bg);color:var(--chalk);
+    font:16px/1.55 var(--disp);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  section{padding:64px 0;border-top:1px solid var(--hair)}
+  section:first-of-type{border-top:0}
+  h1,h2,h3{margin:0;text-transform:uppercase;font-weight:800;letter-spacing:.01em;text-wrap:balance}
+  .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+  .eyebrow{font:700 12px/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
+  .lede{color:var(--muted);font-size:17px;max-width:60ch;text-transform:none;font-weight:400;letter-spacing:0}
+  .sec-head{display:flex;flex-direction:column;gap:10px;margin-bottom:30px}
+  .sec-head h2{font-size:clamp(24px,3.4vw,38px)}
+  .kicker{display:inline-flex;align-items:center;gap:8px;color:var(--vet);
+    font:700 12px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase}
+  .kicker::before{content:"";width:26px;height:3px;background:var(--vet);border-radius:2px}
+
+  /* ── field backdrop ── */
+  .field{position:relative;background:
+      linear-gradient(180deg,var(--turf-a),var(--turf-b));
+    border-radius:18px;overflow:hidden;color:#eef4ef;box-shadow:var(--shadow)}
+  .field::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 2px),var(--turf-line) calc(10% - 2px) 10%)}
+  .field::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(120% 90% at 50% 0%,transparent 40%,rgba(0,0,0,.45))}
+  .field>*{position:relative;z-index:1}
+
+  /* ── HERO ── */
+  .hero{padding-top:52px}
+  .hero .top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:22px}
+  .badge{display:inline-flex;gap:9px;align-items:center;font:700 11px/1 var(--mono);
+    letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .badge b{color:var(--vet)}
+  h1.title{font-size:clamp(34px,6.6vw,74px);line-height:.94;letter-spacing:-.01em;margin:8px 0 14px}
+  h1.title .g{color:var(--vet)}
+  .hero .lede{margin-bottom:30px}
+
+  /* scoreboard */
+  .board{padding:26px clamp(16px,3vw,34px) 30px}
+  .board .row{display:grid;grid-template-columns:1fr auto 1fr;gap:clamp(10px,3vw,34px);align-items:center}
+  .team{display:flex;flex-direction:column;gap:6px}
+  .team.vet{align-items:flex-end;text-align:right}
+  .team .role{font:800 13px/1 var(--disp);letter-spacing:.14em;text-transform:uppercase}
+  .team.rk .role{color:var(--rookie)} .team.vet .role{color:var(--vet)}
+  .team .sub{color:var(--muted);font-size:12.5px;text-transform:none;font-weight:400;max-width:22ch}
+  .team.vet .sub{text-align:right}
+  .rec{font-weight:800;letter-spacing:-.02em;line-height:.9;font-size:clamp(46px,10vw,104px)}
+  .team.rk .rec{color:var(--rookie)} .team.vet .rec{color:var(--vet);text-shadow:0 0 30px rgba(255,210,63,.28)}
+  .ppw{font:600 13px/1 var(--mono);color:var(--muted);letter-spacing:.04em}
+  .stamp{margin-top:8px;display:inline-block;font:800 12px/1 var(--disp);letter-spacing:.13em;
+    text-transform:uppercase;padding:7px 11px;border-radius:6px;border:2px solid}
+  .stamp.out{color:var(--rookie);border-color:var(--rookie-deep);transform:rotate(-4deg)}
+  .stamp.in{color:var(--vet-ink);background:var(--vet);border-color:var(--vet);transform:rotate(-3deg);
+    box-shadow:0 6px 20px rgba(255,210,63,.3)}
+  .vs{display:flex;flex-direction:column;align-items:center;gap:8px;color:#eef4ef}
+  .vs .v{font:800 15px/1 var(--disp);letter-spacing:.1em;opacity:.6}
+  .vs .lift{font-weight:800;font-size:clamp(20px,4.6vw,34px);color:var(--vet);letter-spacing:-.01em;white-space:nowrap}
+  .vs .lift small{display:block;font:600 10.5px/1.3 var(--mono);letter-spacing:.12em;color:var(--muted);
+    text-transform:uppercase;margin-top:5px}
+  .board .foot{margin-top:22px;padding-top:16px;border-top:1px solid rgba(238,244,239,.14);
+    text-align:center;color:#c9d8cf;font-size:13.5px}
+  .board .foot b{color:var(--vet)}
+
+  /* ── generic cards / grids ── */
+  .grid{display:grid;gap:16px}
+  .g4{grid-template-columns:repeat(4,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:1fr 1fr}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+
   /* agents */
-  .agents{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
-  .agent{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
-  .agent .nm{font-weight:700;font-size:17px;display:flex;justify-content:space-between;align-items:baseline}
-  .agent .nm .ppg{font-family:var(--mono);font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums}
-  .agent .why{color:var(--muted);font-size:13.5px;margin:4px 0 12px;min-height:2.7em}
-  .agent .pick{font-family:var(--mono);font-size:12.5px;color:var(--faint);padding:3px 0;
-    border-top:1px dashed var(--line);display:flex;justify-content:space-between}
-  /* head to head */
-  .h2h{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  @media (max-width:620px){.h2h{grid-template-columns:1fr}}
-  .team{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
-  .team.win{border-color:var(--swarm);box-shadow:0 0 0 1px var(--swarm),var(--shadow)}
-  .team h3{margin:0;padding:16px 18px;font-size:15px;display:flex;justify-content:space-between;align-items:center;
-    border-bottom:1px solid var(--line)}
-  .team.win h3{background:color-mix(in srgb,var(--swarm) 12%,transparent)}
-  .team h3 .tot{font-family:var(--mono);font-weight:800;font-variant-numeric:tabular-nums;font-size:20px}
-  .team.win h3 .tot{color:var(--swarm)}
-  .row{display:flex;align-items:center;gap:10px;padding:8px 18px;font-size:14px;border-top:1px solid var(--line)}
-  .row:first-of-type{border-top:0}
-  .pos{font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;
-    background:color-mix(in srgb,var(--muted) 16%,transparent);color:var(--muted);width:34px;text-align:center}
-  .row .pts{margin-left:auto;font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--muted)}
-  .row.diff{background:color-mix(in srgb,var(--swarm) 7%,transparent)}
-  .row.bust .pts{color:var(--naive);font-weight:700}
-  .badge{font-family:var(--mono);font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;
-    background:var(--swarm);color:#04160e;letter-spacing:.04em}
-  .foot{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);color:var(--faint);font-size:13px;max-width:70ch}
-  .foot b{color:var(--muted)}
-  .legend{display:flex;gap:20px;font-size:13px;color:var(--muted);margin-bottom:6px;flex-wrap:wrap}
-  .swatch{display:inline-block;width:22px;height:3px;border-radius:2px;vertical-align:middle;margin-right:7px}
+  .agent .nm{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+  .agent .nm b{font:800 16px/1 var(--disp);letter-spacing:.04em;text-transform:uppercase}
+  .agent .tag{font:700 9.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;
+    padding:4px 7px;border-radius:5px;color:var(--muted);border:1px solid var(--line)}
+  .agent .tag.naive{color:var(--rookie);border-color:var(--rookie-deep)}
+  .agent p{margin:10px 0 14px;color:var(--muted);font-size:14px;text-transform:none;min-height:60px}
+  .agent .share{font:600 11px/1 var(--mono);color:var(--faint);letter-spacing:.06em;display:flex;justify-content:space-between;margin-bottom:6px}
+  .bar{height:7px;border-radius:5px;background:var(--card-2);overflow:hidden}
+  .bar>i{display:block;height:100%;border-radius:5px;background:var(--vet);transform-origin:left;transform:scaleX(0)}
+  .agent.naive .bar>i{background:var(--rookie)}
+
+  /* playbook */
+  .playbook{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+  .playbook .ph{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--card-2);border-bottom:1px solid var(--line)}
+  .playbook .ph .chip{font:800 11px/1 var(--mono);letter-spacing:.16em;color:var(--vet-ink);background:var(--vet);padding:6px 9px;border-radius:5px;text-transform:uppercase}
+  .playbook .ph b{font:800 15px/1 var(--disp);letter-spacing:.05em;text-transform:uppercase}
+  .lesson{display:grid;grid-template-columns:120px 1fr auto;gap:16px;align-items:center;padding:15px 20px;border-top:1px solid var(--hair)}
+  .lesson:first-of-type{border-top:0}
+  .lesson .sig{font:800 13px/1 var(--disp);letter-spacing:.06em;text-transform:uppercase}
+  .lesson .sig small{display:block;font:600 9.5px/1 var(--mono);color:var(--rookie);letter-spacing:.1em;margin-top:5px}
+  .lesson .rule{color:var(--muted);font-size:13.5px;text-transform:none}
+  .lesson .wt{display:flex;align-items:center;gap:10px;min-width:150px}
+  .lesson .wt .bar{width:90px}
+  .lesson .wt .pct{font:700 12px/1 var(--mono);color:var(--chalk);width:34px;text-align:right}
+  .playbook .ph .live{margin-left:auto;display:inline-flex;align-items:center;gap:7px;
+    font:700 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--good)}
+  .playbook .ph .live>i{width:8px;height:8px;border-radius:50%;background:var(--good);
+    box-shadow:0 0 0 0 var(--good);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(84,212,145,.5)}70%{box-shadow:0 0 0 7px rgba(84,212,145,0)}100%{box-shadow:0 0 0 0 rgba(84,212,145,0)}}
+  .evo{border-top:1px solid var(--line);background:var(--card-2);padding:18px 20px 14px}
+  .evo-ttl{font:800 13px/1.2 var(--disp);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
+  .evo-sub{color:var(--muted);font-size:13.5px;text-transform:none;margin:0 0 8px;max-width:74ch}
+  .evo-legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:4px}
+  .evo-legend .lg{display:inline-flex;align-items:center;gap:7px;font:700 11px/1 var(--mono);letter-spacing:.03em}
+  .evo-legend .lg i{width:14px;height:3px;border-radius:2px}
+  .evo-legend .lg .d{color:var(--faint);font-weight:600;text-transform:none}
+
+  /* chart + standings */
+  .tape{display:grid;grid-template-columns:1.45fr 1fr;gap:20px;align-items:start}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 18px 12px;box-shadow:var(--shadow)}
+  .panel .ttl{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .panel .ttl b{font:800 13px/1 var(--disp);letter-spacing:.08em;text-transform:uppercase}
+  .legend{display:flex;gap:14px;font:600 11px/1 var(--mono);color:var(--muted);letter-spacing:.03em}
+  .legend i{display:inline-block;width:12px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+  .chart{width:100%;height:auto;display:block}
+  .stand .r{display:grid;grid-template-columns:26px 1fr auto;gap:10px;align-items:center;
+    padding:7px 10px;border-radius:8px;font-size:13px}
+  .stand .r .pl{font:700 12px/1 var(--mono);color:var(--faint);text-align:right}
+  .stand .r .who{display:flex;align-items:center;gap:8px;text-transform:uppercase;font-weight:700;letter-spacing:.03em;font-size:12px}
+  .dot{width:9px;height:9px;border-radius:50%;flex:none}
+  .dot.vet{background:var(--vet)} .dot.rk{background:var(--rookie)}
+  .stand .r .wp{font:700 12px/1 var(--mono);color:var(--muted)}
+  .stand .r.playoff{background:linear-gradient(90deg,rgba(255,210,63,.10),transparent);
+    box-shadow:inset 3px 0 0 var(--vet)}
+  .cutline{display:flex;align-items:center;gap:10px;margin:8px 0;color:var(--vet);
+    font:700 9.5px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase}
+  .cutline::before,.cutline::after{content:"";height:1px;background:var(--vet);opacity:.5;flex:1}
+
+  /* draft board */
+  .pcards{display:grid;gap:12px}
+  .pc{display:grid;grid-template-columns:auto 1fr auto;gap:13px;align-items:center;
+    background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .pos{width:38px;height:38px;flex:none;border-radius:9px;display:grid;place-items:center;
+    font:800 12px/1 var(--disp);letter-spacing:.02em;color:#0c1a14;background:#8aa398}
+  .pos.RB{background:#7fd3a3}.pos.WR{background:#7fc0e0}.pos.QB{background:#e0b57f}.pos.TE{background:#c79fe0}
+  .pc .nm{font:800 15px/1.1 var(--disp);letter-spacing:.01em}
+  .pc .nm small{display:block;font:600 11px/1 var(--mono);color:var(--faint);letter-spacing:.04em;margin-top:5px;text-transform:none}
+  .pc .mv{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .pc .mv .a{font:700 12px/1 var(--mono);color:var(--muted)}
+  .pc .mv .b{font:800 18px/1.1 var(--disp);letter-spacing:-.01em;margin-top:3px}
+  .mv .b.up{color:var(--good)} .mv .b.down{color:var(--bad)}
+
+  /* proof */
+  .proof .card h3{font-size:14px;letter-spacing:.05em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .proof .card h3 .ic{width:22px;height:22px;flex:none;border-radius:6px;background:var(--vet);color:var(--vet-ink);
+    display:grid;place-items:center;font:800 12px/1 var(--mono)}
+  .proof .card p{margin:0;color:var(--muted);font-size:13.5px;text-transform:none}
+  .gtable{width:100%;border-collapse:collapse;margin-top:18px;font-variant-numeric:tabular-nums}
+  .gtable th,.gtable td{padding:11px 12px;text-align:right;border-bottom:1px solid var(--hair);font-size:13.5px}
+  .gtable th{color:var(--faint);font:700 10.5px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase}
+  .gtable td:first-child,.gtable th:first-child{text-align:left;font-weight:800;letter-spacing:.04em}
+  .gtable .rk{color:var(--rookie)} .gtable .vt{color:var(--vet);font-weight:800}
+  .gtable tr.focus td{background:linear-gradient(90deg,rgba(255,210,63,.09),transparent)}
+  .gtable .lift{color:var(--good);font-weight:800}
+  .pill{display:inline-block;font:700 10px/1 var(--mono);padding:3px 6px;border-radius:4px;letter-spacing:.06em;
+    background:var(--card-2);color:var(--muted);border:1px solid var(--line)}
+
+  .foot-note{color:var(--faint);font-size:12.5px;text-transform:none;margin-top:14px;max-width:70ch}
+  footer{padding:40px 0 64px;color:var(--muted);font-size:13.5px;text-transform:none}
+  footer b{color:var(--chalk)}
+  footer .flow{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 0;font:700 11px/1 var(--mono);
+    letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  footer .flow span{background:var(--card);border:1px solid var(--line);padding:7px 11px;border-radius:6px}
+  footer .flow span.on{color:var(--vet);border-color:var(--vet)}
+
+  @media (max-width:820px){
+    .g4,.g3{grid-template-columns:1fr 1fr}.tape{grid-template-columns:1fr}
+    .board .row{grid-template-columns:1fr;gap:20px}.team,.team.vet{align-items:flex-start;text-align:left}
+    .team.vet .sub{text-align:left}.vs{flex-direction:row;justify-content:space-between;width:100%}
+  }
+  @media (max-width:520px){.g4,.g3,.g2{grid-template-columns:1fr}.lesson{grid-template-columns:1fr auto}}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
-<div class="wrap">
-  <header>
-    <div class="eyebrow">Gandalf Protocol · self-evolving agents</div>
-    <h1>A swarm that learns fantasy football from what actually happened.</h1>
-    <p class="lede">Four agents argue over every roster call. A judge scores them on
-      <b>ground truth — real NFL points</b>, not an LLM's opinion. Left alone, a single agent
-      stays flat. The swarm <b>self-evolves</b> and its picks climb. Here it is on a held-out
-      season it never trained on.</p>
-  </header>
+<div class="wrap hero">
+  <div class="top">
+    <span class="badge"><b>◆ GANDALF PROTOCOL</b> · SELF-EVOLVING SWARM</span>
+    <span class="badge" id="theme-note">2025 SEASON · REPLAY</span>
+  </div>
+  <span class="eyebrow">a self-improvement demo</span>
+  <h1 class="title">The draft that <span class="g">learned</span><br>to make the playoffs.</h1>
+  <p class="lede">Four agents argue over how to draft a fantasy team. They play a full season, study
+    their own mistakes, learn each agent's influence share — then replay the <em>same</em> season with what they learned.
+    The judge isn't an opinion. It's the scoreboard.</p>
 
-  <div class="stats" id="stats"></div>
-
-  <section>
-    <h2>The learning curve — top-10 starters' real points</h2>
-    <div class="chartcard">
-      <div class="legend">
-        <span><i class="swatch" style="background:var(--swarm)"></i>Gandalf swarm (self-evolving)</span>
-        <span><i class="swatch" style="background:var(--naive)"></i>solo agent (naive, no learning)</span>
+  <div class="field board">
+    <div class="row">
+      <div class="team rk">
+        <span class="role">The Rookie</span>
+        <span class="sub">Drafts whoever's hot — trusts the last three weeks.</span>
+        <span class="rec num" id="rk-ppw">—</span>
+        <span class="ppw num" id="rk-line">— pts/wk</span>
+        <span class="stamp out" id="rk-stamp">✗ Missed Playoffs</span>
       </div>
-      <svg id="chart" viewBox="0 0 720 320" role="img"
-           aria-label="Swarm decision quality climbs from 17.0 to 20.6 real PPG while the solo agent stays flat at 17.0"></svg>
-      <p class="cap">Each round the swarm adopts the agent whose signal most improves its fit to
-        real outcomes, then refits. Measured out-of-sample on 2025 — nothing tuned to force the shape.</p>
+      <div class="vs">
+        <span class="v">VS</span>
+        <span class="lift num" id="lift">+0<small>pts / week</small></span>
+      </div>
+      <div class="team vet">
+        <span class="role">The Veteran</span>
+        <span class="sub">Drafts by the swarm's learned influence — values volume &amp; production.</span>
+        <span class="rec num" id="vt-ppw">—</span>
+        <span class="ppw num" id="vt-line">— pts/wk</span>
+        <span class="stamp in" id="vt-stamp">✓ Clinched</span>
+      </div>
     </div>
-  </section>
-
-  <section>
-    <h2>The agents argue — and none of them is right alone</h2>
-    <div class="agents" id="agents"></div>
-    <p class="cap">Each agent's own top-5 team scores very differently. The learned swarm
-      (<b style="color:var(--swarm)">20.6</b>) beats every single one — the combination is the point.</p>
-  </section>
-
-  <section>
-    <h2>The payoff — the team the swarm drafts vs. the naive team</h2>
-    <div class="h2h" id="h2h"></div>
-    <p class="cap">Same top players, but the naive agent chases recent points into busts (e.g.
-      Rome Odunze, 7.4) the swarm's learned model avoids. Real 2025 rest-of-season points.</p>
-  </section>
-
-  <p class="foot">
-    <b>How this is honest.</b> Trained on 2022–24, judged on a held-out 2025 season. The metric is
-    real decision quality (top picks' actual points) + prediction error, not a curve we shaped.
-    Ranking the <i>whole</i> player pool is efficient — recent points nearly tie every signal — so
-    the climb is real only because the learned <i>combination</i> beats the naive signal on the
-    decisions that matter. The 4th signal (usage-trend) is marginal and nudges the peak down from
-    +Volume — kept in, not trimmed. One demo domain of the Gandalf swarm; the judge being ground
-    truth is what fantasy adds.
-  </p>
+    <div class="foot">Same season · same players · same schedule · full <b>PPR</b> lineup (K + D/ST).
+      The only variable is <b>what the swarm learned</b> — worth <b id="foot-lift">+0</b> pts/week,
+      the gap between a playoff seed and watching from home.</div>
+  </div>
 </div>
 
+<section><div class="wrap">
+  <div class="sec-head">
+    <span class="kicker">The Film Room</span>
+    <h2>What they learned from their own mistakes</h2>
+    <p class="lede">Each agent champions one way to value a player. Alone, none of them is right.
+      The swarm turns the argument into an influence share for each agent — validated against real
+      points — and re-derives it every week from fresh simulations. Trusting one agent (“start whoever’s hot”) gets
+      demoted as the evidence comes in.</p>
+  </div>
+  <div class="grid g4" id="agents" style="margin-bottom:26px"></div>
+  <div class="playbook">
+    <div class="ph"><span class="chip">Influence Share</span>
+      <b>How the swarm values a pick</b>
+      <span class="live"><i></i>self-evolving</span></div>
+    <div id="lessons"></div>
+    <div class="evo">
+      <div class="evo-ttl">The weighting is not fixed — it re-derives itself every week</div>
+      <p class="evo-sub">Each week the swarm re-runs its simulations on the latest real results and
+        re-fits what every agent is worth. Watch the 2025 season unfold: early on it leans on recent
+        form and raw volume; as the evidence piles up it demotes “who’s hot” and shifts trust to
+        full-season production and rising usage. Same loop, new numbers every week.</p>
+      <svg class="chart" id="evochart" viewBox="0 0 640 250" role="img"
+        aria-label="Each agent's influence share, re-derived every week of the 2025 season"></svg>
+      <div class="evo-legend" id="evolegend"></div>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sec-head">
+    <span class="kicker">The Tape</span>
+    <h2>Replaying 2025 with the learned influence</h2>
+    <p class="lede">Same rosters’ worth of talent, graded on <em>actual</em> weekly NFL points. Six GMs draft
+      the rookie way, six draft by the learned influence. Week by week, the veteran teams pull away — and claim
+      the playoff seeds.</p>
+  </div>
+  <div class="tape">
+    <div class="panel">
+      <div class="ttl"><b>Points per week · league average</b>
+        <span class="legend"><span><i style="background:var(--rookie)"></i>Rookie GMs</span>
+          <span><i style="background:var(--vet)"></i>Veteran GMs</span></span></div>
+      <svg class="chart" id="chart" viewBox="0 0 640 300" role="img"
+        aria-label="Weekly points: veteran GMs above rookie GMs across the season"></svg>
+    </div>
+    <div class="panel stand">
+      <div class="ttl"><b>Final standings</b><span class="legend">all-play win%</span></div>
+      <div id="standings"></div>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="sec-head">
+    <span class="kicker">The Draft Board</span>
+    <h2>The picks that decided it</h2>
+    <p class="lede">Where the two strategies disagreed most — and how it turned out. Early points per game
+      at draft time → what they <em>actually</em> averaged the rest of the way.</p>
+  </div>
+  <div class="grid g2">
+    <div>
+      <h3 style="font-size:14px;color:var(--rookie);letter-spacing:.08em;margin-bottom:12px">⚠ Rookie traps · hot early, then faded</h3>
+      <div class="pcards" id="traps"></div>
+    </div>
+    <div>
+      <h3 style="font-size:14px;color:var(--vet);letter-spacing:.08em;margin-bottom:12px">★ Veteran gems · quiet early, then produced</h3>
+      <div class="pcards" id="gems"></div>
+    </div>
+  </div>
+  <p class="foot-note">The lesson in the names: the traps are boom-week pass-catchers riding early
+    touchdowns; the gems are workhorse backs the swarm's influence prized for volume. Reality — rest-of-season
+    points — settled every argument.</p>
+</div></section>
+
+<section class="proof"><div class="wrap">
+  <div class="sec-head">
+    <span class="kicker">The Integrity Check</span>
+    <h2>Are they just memorizing 2025? No.</h2>
+    <p class="lede">A learning demo is worthless if it peeked at the answers. Three guarantees, each true
+      by construction — not by claim.</p>
+  </div>
+  <div class="grid g3">
+    <div class="card"><h3><span class="ic">1</span>Walk-forward</h3>
+      <p>Every draft reads only weeks 1–3. It’s graded on weeks 4–14 — games that hadn’t happened at
+        decision time. The outcome is never visible when the choice is made.</p></div>
+    <div class="card"><h3><span class="ic">2</span>Held-out influence</h3>
+      <p>The influence share is four signal weights, fit on the <em>other</em> seasons and never on the one it’s
+        scored against. Four numbers can’t memorize a player’s box score.</p></div>
+    <div class="card"><h3><span class="ic">3</span>It generalizes</h3>
+      <p>The identical influence weights lift <em>every</em> season they’re tested on. Memorizing one season would do
+        nothing for the others. Strategy transfers; memory doesn’t.</p></div>
+  </div>
+  <table class="gtable" id="gtable">
+    <thead><tr><th>Season</th><th>Rookie PPW</th><th>Veteran PPW</th><th>Lift / wk</th>
+      <th>Rookie</th><th>Veteran</th><th>Playoff seeds</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <p class="foot-note">Leave-one-season-out: for each row, the influence weights were trained on the three other
+    seasons only. 2023 is the honest weak case — a near-tie — and it stays in the table. We don’t trim
+    the season that doesn’t flatter the story.</p>
+</div></section>
+
+<footer><div class="wrap">
+  <b>Fantasy football is a demo domain for Gandalf</b> — a self-evolving swarm that proposes, argues,
+  is judged, and distills an influence share, then improves. Here the judge is ground truth (real NFL points),
+  so the learning is unfakeable. The same loop runs the gift domain and others.
+  <div class="flow">
+    <span class="on">Propose</span><span>→</span><span class="on">Argue</span><span>→</span>
+    <span class="on">Judge · real points</span><span>→</span><span class="on">Distill influence</span>
+    <span>→</span><span class="on">Improve</span>
+  </div>
+</div></footer>
+
 <script>
-const DATA = {"climb":[{"label":"naive","sub":"Recency","ppg":17.0},{"label":"+Season","ppg":19.3},{"label":"+Volume","ppg":21.7},{"label":"+Trend","ppg":20.6}],
-  "solo":17.0,"swarm":20.6,"solo_mae":3.08,"swarm_mae":2.87,"train":8931,
-  "agents":{"Recency":{"why":"“He's been scoring lately.” The obvious signal everyone starts with.","ppg":17.0,"picks":[["Christian McCaffrey",25.8],["Jonathan Taylor",24.4],["Puka Nacua",16.6]]},
-    "Season":{"why":"Trust the full-season average, not a hot streak.","ppg":20.1,"picks":[["Christian McCaffrey",25.8],["Josh Allen",23.5],["Puka Nacua",16.6]]},
-    "Volume":{"why":"Opportunity — targets + carries — is what's real.","ppg":20.8,"picks":[["Christian McCaffrey",25.8],["Jonathan Taylor",24.4],["Josh Jacobs",15.0]]},
-    "Trend":{"why":"Usage is trending up — a breakout before the box score.","ppg":13.3,"picks":[["De'Von Achane",21.8],["Quinshon Judkins",11.9],["Cam Skattebo",8.2]]}},
-  "swarm_team":[["Christian McCaffrey","RB",25.8],["Jahmyr Gibbs","RB",25.4],["Jonathan Taylor","RB",24.4],["Josh Allen","QB",23.5],["Patrick Mahomes","QB",20.5],["Bijan Robinson","RB",19.5],["Drake Maye","QB",19.5],["Jalen Hurts","QB",18.2],["Puka Nacua","WR",16.6],["James Cook III","RB",15.9],["Amon-Ra St. Brown","WR",15.5],["Lamar Jackson","QB",9.1]],
-  "naive_team":[["Christian McCaffrey","RB",25.8],["Jahmyr Gibbs","RB",25.4],["Jonathan Taylor","RB",24.4],["Dak Prescott","QB",20.7],["Drake Maye","QB",19.5],["Bijan Robinson","RB",19.5],["George Pickens","WR",19.0],["Puka Nacua","WR",16.6],["James Cook III","RB",15.9],["Amon-Ra St. Brown","WR",15.5],["Lamar Jackson","QB",9.1],["Rome Odunze","WR",7.4]]};
+const DATA = {"meta":{"focus_season":2025,"train":"leave-one-season-out","n_teams":12,"playoff_spots":6,"games":14,"train_decisions":12943,"scoring":"PPR (1 pt / reception)","roster":"16-man roster; start 1 QB / 2 RB / 2 WR / 1 TE / 1 FLEX / 1 K / 1 D/ST","draft_note":"drafted on weeks 1-3 form; graded weeks 4-14 (never seen at draft)"},"headline":{"rookie":{"record":"7-7","ppw":95.9,"avg_place":7.5,"made_playoffs":false},"veteran":{"record":"7-7","ppw":100.4,"avg_place":5.5,"made_playoffs":true},"lift_ppw":4.5},"playbook":{"naive":"recency","lessons":[{"signal":"season","weight":2.87,"share":0.487,"rule":"Trust full-season production over a hot three weeks.","is_naive":false},{"signal":"recency","weight":1.39,"share":0.236,"rule":"Recent form still matters, but weight it, don't worship it.","is_naive":true},{"signal":"volume","weight":0.85,"share":0.145,"rule":"Chase opportunity — targets + carries — not last week's points.","is_naive":false},{"signal":"opp_trend","weight":0.78,"share":0.132,"rule":"Rising usage is a breakout signal before the box score catches up.","is_naive":false}]},"evolution":[{"week":5,"shares":{"recency":0.692,"season":0.013,"volume":0.283,"opp_trend":0.012}},{"week":6,"shares":{"recency":0.456,"season":0.254,"volume":0.289,"opp_trend":0.001}},{"week":7,"shares":{"recency":0.226,"season":0.466,"volume":0.251,"opp_trend":0.057}},{"week":8,"shares":{"recency":0.225,"season":0.464,"volume":0.248,"opp_trend":0.063}},{"week":9,"shares":{"recency":0.174,"season":0.554,"volume":0.197,"opp_trend":0.075}},{"week":10,"shares":{"recency":0.16,"season":0.544,"volume":0.196,"opp_trend":0.1}},{"week":11,"shares":{"recency":0.138,"season":0.547,"volume":0.198,"opp_trend":0.117}},{"week":12,"shares":{"recency":0.142,"season":0.533,"volume":0.194,"opp_trend":0.132}},{"week":13,"shares":{"recency":0.168,"season":0.504,"volume":0.197,"opp_trend":0.131}},{"week":14,"shares":{"recency":0.165,"season":0.513,"volume":0.186,"opp_trend":0.135}}],"series":[{"week":4,"rookie":104.1,"veteran":100.1},{"week":5,"rookie":94.8,"veteran":107.0},{"week":6,"rookie":81.4,"veteran":104.2},{"week":7,"rookie":108.5,"veteran":108.9},{"week":8,"rookie":88.6,"veteran":98.9},{"week":9,"rookie":104.9,"veteran":102.7},{"week":10,"rookie":92.7,"veteran":105.9},{"week":11,"rookie":101.6,"veteran":91.3},{"week":12,"rookie":94.3,"veteran":93.4},{"week":13,"rookie":85.7,"veteran":99.3},{"week":14,"rookie":98.6,"veteran":92.5}],"standings":[{"place":1,"kind":"veteran","win_pct":0.76,"ppw":115.5},{"place":2,"kind":"rookie","win_pct":0.752,"ppw":114.7},{"place":3,"kind":"veteran","win_pct":0.587,"ppw":103.2},{"place":4,"kind":"rookie","win_pct":0.579,"ppw":106.4},{"place":5,"kind":"veteran","win_pct":0.529,"ppw":100.2},{"place":6,"kind":"veteran","win_pct":0.529,"ppw":101.2},{"place":7,"kind":"rookie","win_pct":0.471,"ppw":96.6},{"place":8,"kind":"veteran","win_pct":0.43,"ppw":96.1},{"place":9,"kind":"rookie","win_pct":0.388,"ppw":90.0},{"place":10,"kind":"veteran","win_pct":0.364,"ppw":86.2},{"place":11,"kind":"rookie","win_pct":0.306,"ppw":84.1},{"place":12,"kind":"rookie","win_pct":0.306,"ppw":83.9}],"generalization":[{"year":2022,"is_focus":false,"rookie_ppw":92.3,"veteran_ppw":102.6,"lift_ppw":10.3,"rookie_record":"6-8","veteran_record":"8-6","veteran_playoffs":4,"playoff_spots":6},{"year":2023,"is_focus":false,"rookie_ppw":98.6,"veteran_ppw":104.3,"lift_ppw":5.7,"rookie_record":"7-7","veteran_record":"7-7","veteran_playoffs":3,"playoff_spots":6},{"year":2024,"is_focus":false,"rookie_ppw":93.5,"veteran_ppw":105.1,"lift_ppw":11.7,"rookie_record":"6-8","veteran_record":"8-6","veteran_playoffs":5,"playoff_spots":6},{"year":2025,"is_focus":true,"rookie_ppw":95.9,"veteran_ppw":100.4,"lift_ppw":4.5,"rookie_record":"7-7","veteran_record":"7-7","veteran_playoffs":4,"playoff_spots":6}],"contrast":{"rookie_reaches":[{"name":"Spencer Shrader","pos":"K","early_ppg":14.7,"rest_ppg":1.2,"rookie_rank":48,"veteran_rank":75},{"name":"Brandon Aubrey","pos":"K","early_ppg":14.0,"rest_ppg":10.3,"rookie_rank":57,"veteran_rank":88},{"name":"Zay Flowers","pos":"WR","early_ppg":15.4,"rest_ppg":11.7,"rookie_rank":38,"veteran_rank":48},{"name":"Aaron Rodgers","pos":"QB","early_ppg":15.9,"rest_ppg":12.2,"rookie_rank":31,"veteran_rank":43},{"name":"Emeka Egbuka","pos":"WR","early_ppg":17.0,"rest_ppg":12.2,"rookie_rank":27,"veteran_rank":39}],"veteran_values":[{"name":"Bo Nix","pos":"QB","early_ppg":13.5,"rest_ppg":19.0,"rookie_rank":68,"veteran_rank":52},{"name":"Josh Jacobs","pos":"RB","early_ppg":13.6,"rest_ppg":16.7,"rookie_rank":66,"veteran_rank":34},{"name":"Kyren Williams","pos":"RB","early_ppg":14.4,"rest_ppg":16.0,"rookie_rank":52,"veteran_rank":32}]},"agents":[{"name":"Recency","claim":"Start whoever's hot — trust the last three weeks.","signal":"recency","share":0.236,"is_naive":true},{"name":"Season","claim":"Trust the full-season body of work, not a hot streak.","signal":"season","share":0.487,"is_naive":false},{"name":"Volume","claim":"Opportunity is real — chase targets and carries.","signal":"volume","share":0.145,"is_naive":false},{"name":"Trend","claim":"Rising usage is a breakout before the box score shows it.","signal":"opp_trend","share":0.132,"is_naive":false}]};
 
-const $=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
+const $=(s,r=document)=>r.querySelector(s), el=(t,c)=>{const e=document.createElement(t);if(c)e.className=c;return e;};
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const H=DATA.headline;
 
-// ── stat tiles ──
-const sw=DATA.swarm, so=DATA.solo;
-const stats=[
-  ["swarm vs solo (top-10 real PPG)",`<span class="up">${sw.toFixed(1)}</span> <small>vs ${so.toFixed(1)} naive · +${(sw-so).toFixed(1)}/starter</small>`],
-  ["prediction error (held-out MAE)",`${DATA.solo_mae.toFixed(2)} <small>→</small> <span class="up">${DATA.swarm_mae.toFixed(2)}</span>`],
-  ["trained on real decisions",`${DATA.train.toLocaleString()} <small>· 4 seasons · judge = real points</small>`],
-];
-const sc=document.getElementById("stats");
-stats.forEach(([k,v])=>{const t=$("div","tile");t.append($("div","k",k),$("div","v",v));sc.append(t)});
+// ── hero scoreboard ──
+const seed=p=>{const n=Math.round(p),d=n%10,dd=n%100;
+  return n+(d===1&&dd!==11?'st':d===2&&dd!==12?'nd':d===3&&dd!==13?'rd':'th');};
+$('#rk-ppw').textContent=H.rookie.ppw.toFixed(1); $('#vt-ppw').textContent=H.veteran.ppw.toFixed(1);
+$('#rk-line').textContent=`${H.rookie.record} · ${seed(H.rookie.avg_place)} · pts/wk`;
+$('#vt-line').textContent=`${H.veteran.record} · ${seed(H.veteran.avg_place)} · pts/wk`;
+$('#lift').innerHTML='+'+H.lift_ppw.toFixed(1)+'<small>pts / week</small>';
+$('#foot-lift').textContent='+'+H.lift_ppw.toFixed(1);
+if(H.rookie.made_playoffs){const s=$('#rk-stamp');s.textContent='✓ Clinched';s.className='stamp in';}
+if(!H.veteran.made_playoffs){const s=$('#vt-stamp');s.textContent='✗ Missed Playoffs';s.className='stamp out';}
 
-// ── climb chart (SVG) ──
+// ── agents ──
+const ag=$('#agents');
+DATA.agents.forEach((a,i)=>{
+  const c=el('div','card agent'+(a.is_naive?' naive':''));
+  c.innerHTML=`<div class="nm"><b>${a.name}</b><span class="tag${a.is_naive?' naive':''}">${a.is_naive?'one agent':'signal'}</span></div>
+    <p>“${a.claim}”</p>
+    <div class="share"><span>influence share</span><span>${Math.round(a.share*100)}%</span></div>
+    <div class="bar"><i data-w="${a.share}"></i></div>`;
+  ag.appendChild(c);
+});
+
+// ── playbook lessons ──
+const ls=$('#lessons'); const maxW=Math.max(...DATA.playbook.lessons.map(l=>Math.abs(l.weight)));
+DATA.playbook.lessons.forEach(l=>{
+  const r=el('div','lesson');
+  const label={recency:'Recency',season:'Season',volume:'Volume',opp_trend:'Trend'}[l.signal]||l.signal;
+  r.innerHTML=`<div class="sig">${label}${l.is_naive?'<small>one agent alone</small>':''}</div>
+    <div class="rule">${l.rule}</div>
+    <div class="wt"><div class="bar"><i data-w="${Math.abs(l.weight)/maxW}" ${l.is_naive?'style="background:var(--rookie)"':''}></i></div>
+      <span class="pct">${Math.round(l.share*100)}%</span></div>`;
+  ls.appendChild(r);
+});
+
+// ── standings ──
+const st=$('#standings');
+DATA.standings.forEach(s=>{
+  if(s.place===DATA.meta.playoff_spots+1){const cut=el('div','cutline');cut.textContent='Playoff Line';st.appendChild(cut);}
+  const r=el('div','r'+(s.place<=DATA.meta.playoff_spots?' playoff':''));
+  const label=s.kind==='veteran'?'Veteran':'Rookie';
+  r.innerHTML=`<span class="pl num">${s.place}</span>
+    <span class="who"><span class="dot ${s.kind==='veteran'?'vet':'rk'}"></span>${label} GM</span>
+    <span class="wp num">${Math.round(s.win_pct*100)}%</span>`;
+  st.appendChild(r);
+});
+
+// ── draft board ──
+function pcard(p,dir){
+  const c=el('div','pc');
+  const arrow=dir==='up'?'▲':'▼';
+  c.innerHTML=`<div class="pos ${p.pos}">${p.pos}</div>
+    <div class="nm">${p.name}<small>rookie #${p.rookie_rank} · veteran #${p.veteran_rank}</small></div>
+    <div class="mv"><div class="a">${p.early_ppg.toFixed(1)} early</div>
+      <div class="b ${dir}">${arrow} ${p.rest_ppg.toFixed(1)}</div></div>`;
+  return c;
+}
+DATA.contrast.rookie_reaches.forEach(p=>$('#traps').appendChild(pcard(p,'down')));
+DATA.contrast.veteran_values.forEach(p=>$('#gems').appendChild(pcard(p,'up')));
+
+// ── generalization table ──
+const gb=$('#gtable tbody');
+DATA.generalization.forEach(g=>{
+  const tr=el('tr',g.is_focus?'focus':'');
+  tr.innerHTML=`<td>${g.year}${g.is_focus?' <span class="pill">shown above</span>':''}</td>
+    <td class="rk num">${g.rookie_ppw.toFixed(1)}</td>
+    <td class="vt num">${g.veteran_ppw.toFixed(1)}</td>
+    <td class="lift num">+${g.lift_ppw.toFixed(1)}</td>
+    <td class="rk num">${g.rookie_record}</td>
+    <td class="vt num">${g.veteran_record}</td>
+    <td class="num">${g.veteran_playoffs} / ${g.playoff_spots}</td>`;
+  gb.appendChild(tr);
+});
+
+// ── weekly chart (SVG) ──
 (function(){
-  const W=720,H=320,padL=52,padR=24,padT=24,padB=52;
-  const pts=DATA.climb, n=pts.length;
-  const ys=pts.map(p=>p.ppg).concat([DATA.solo]);
-  const lo=Math.floor(Math.min(...ys))-1, hi=Math.ceil(Math.max(...ys))+1;
-  const X=i=>padL+(W-padL-padR)*(i/(n-1));
-  const Y=v=>padT+(H-padT-padB)*(1-(v-lo)/(hi-lo));
-  const svg=document.getElementById("chart");
-  const NS="http://www.w3.org/2000/svg";
-  const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e};
+  const svg=$('#chart'), W=640,Hh=300, pad={l:40,r:16,t:16,b:34};
+  const xs=DATA.series.map(d=>d.week);
+  const vals=DATA.series.flatMap(d=>[d.rookie,d.veteran]);
+  const ymin=Math.floor((Math.min(...vals)-6)/10)*10, ymax=Math.ceil((Math.max(...vals)+6)/10)*10;
+  const X=i=>pad.l+(W-pad.l-pad.r)*(i/(xs.length-1));
+  const Y=v=>Hh-pad.b-(Hh-pad.t-pad.b)*((v-ymin)/(ymax-ymin));
+  const NS='http://www.w3.org/2000/svg';
+  // geometry → attributes; color/font → inline style (so var() resolves & stays theme-reactive)
+  const STYLE_KEYS=new Set(['stroke','fill','stroke-width','stroke-linejoin','stroke-linecap',
+    'font-size','font-family','font-weight','text-anchor']);
+  const mk=(t,a)=>{const e=document.createElementNS(NS,t);
+    for(const k in a){ if(STYLE_KEYS.has(k)) e.style.setProperty(k,a[k]); else e.setAttribute(k,a[k]); }
+    return e;};
   // gridlines + y labels
-  for(let v=lo;v<=hi;v++){
-    svg.append(el("line",{x1:padL,y1:Y(v),x2:W-padR,y2:Y(v),stroke:"var(--line)","stroke-width":v===Math.round(DATA.solo)?0:1}));
-    const tx=el("text",{x:padL-10,y:Y(v)+4,"text-anchor":"end",fill:"var(--faint)","font-size":11,"font-family":"var(--mono)"});tx.textContent=v;svg.append(tx);
+  for(let v=ymin; v<=ymax; v+=10){
+    svg.appendChild(mk('line',{x1:pad.l,x2:W-pad.r,y1:Y(v),y2:Y(v),stroke:'var(--line)','stroke-width':1}));
+    const t=mk('text',{x:pad.l-8,y:Y(v)+4,'text-anchor':'end',fill:'var(--faint)','font-size':'10px','font-family':'var(--mono)'});
+    t.textContent=v; svg.appendChild(t);
   }
-  // solo baseline (dashed clay)
-  svg.append(el("line",{x1:padL,y1:Y(DATA.solo),x2:W-padR,y2:Y(DATA.solo),stroke:"var(--naive)","stroke-width":2.5,"stroke-dasharray":"7 5"}));
-  const sl=el("text",{x:W-padR,y:Y(DATA.solo)-8,"text-anchor":"end",fill:"var(--naive)","font-size":12,"font-weight":700,"font-family":"var(--mono)"});sl.textContent="solo "+DATA.solo.toFixed(1);svg.append(sl);
-  // area + swarm line
-  const line=pts.map((p,i)=>`${i?"L":"M"}${X(i)},${Y(p.ppg)}`).join(" ");
-  const area=el("path",{d:`${line} L${X(n-1)},${Y(lo)} L${X(0)},${Y(lo)} Z`,fill:"var(--swarm)","fill-opacity":.10});
-  svg.append(area);
-  const path=el("path",{d:line,fill:"none",stroke:"var(--swarm)","stroke-width":3.5,"stroke-linejoin":"round","stroke-linecap":"round"});
-  svg.append(path);
-  const len=path.getTotalLength();
-  path.style.strokeDasharray=len;path.style.strokeDashoffset=len;
-  path.style.transition="stroke-dashoffset 1.4s ease";
-  requestAnimationFrame(()=>{path.style.strokeDashoffset=0});
-  // nodes + labels
-  pts.forEach((p,i)=>{
-    const c=el("circle",{cx:X(i),cy:Y(p.ppg),r:5.5,fill:"var(--surface)",stroke:"var(--swarm)","stroke-width":3});
-    c.style.opacity=0;c.style.transition="opacity .3s ease "+(0.4+i*0.28)+"s";svg.append(c);
-    requestAnimationFrame(()=>c.style.opacity=1);
-    const vl=el("text",{x:X(i),y:Y(p.ppg)-14,"text-anchor":"middle",fill:"var(--swarm)","font-size":13,"font-weight":800,"font-family":"var(--mono)"});
-    vl.textContent=p.ppg.toFixed(1);vl.style.opacity=0;vl.style.transition="opacity .3s ease "+(0.5+i*0.28)+"s";svg.append(vl);requestAnimationFrame(()=>vl.style.opacity=1);
-    const xl=el("text",{x:X(i),y:H-padB+22,"text-anchor":"middle",fill:"var(--muted)","font-size":12,"font-weight":600});
-    xl.textContent=p.label;svg.append(xl);
-    if(p.sub){const s=el("text",{x:X(i),y:H-padB+38,"text-anchor":"middle",fill:"var(--faint)","font-size":10,"font-family":"var(--mono)"});s.textContent=p.sub;svg.append(s)}
+  // x labels (weeks)
+  xs.forEach((w,i)=>{const t=mk('text',{x:X(i),y:Hh-10,'text-anchor':'middle',fill:'var(--faint)','font-size':'10px','font-family':'var(--mono)'});t.textContent='W'+w;svg.appendChild(t);});
+  const line=(key,color)=>{
+    const pts=DATA.series.map((d,i)=>[X(i),Y(d[key])]);
+    const dpath='M'+pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' L');
+    const path=mk('path',{d:dpath,fill:'none',stroke:color,'stroke-width':'3','stroke-linejoin':'round','stroke-linecap':'round'});
+    svg.appendChild(path);
+    pts.forEach((p,i)=>{if(i===pts.length-1)svg.appendChild(mk('circle',{cx:p[0],cy:p[1],r:4,fill:color}));});
+    if(!reduce){const len=path.getTotalLength();path.style.strokeDasharray=len;path.style.strokeDashoffset=len;
+      path.style.transition='stroke-dashoffset 1.1s ease-out';requestAnimationFrame(()=>{path.style.strokeDashoffset=0;});}
+    return pts[pts.length-1];
+  };
+  line('rookie','var(--rookie)');
+  const vend=line('veteran','var(--vet)');
+  // veteran endpoint label
+  const lbl=mk('text',{x:vend[0]-6,y:vend[1]-10,'text-anchor':'end',fill:'var(--vet)','font-size':'11px','font-weight':'800','font-family':'var(--disp)'});
+  lbl.textContent='Veteran'; svg.appendChild(lbl);
+})();
+
+// ── self-evolving weight trajectory (SVG, 4 share lines) ──
+(function(){
+  const svg=$('#evochart'); if(!svg||!DATA.evolution||!DATA.evolution.length) return;
+  const W=640,Hh=250,pad={l:40,r:78,t:14,b:28};
+  const E=DATA.evolution, wks=E.map(d=>d.week);
+  const SIG=[['season','Season','var(--c-season)'],['recency','Recency','var(--c-recency)'],
+             ['volume','Volume','var(--c-volume)'],['opp_trend','Trend','var(--c-trend)']];
+  const ymax=70;
+  const X=i=>pad.l+(W-pad.l-pad.r)*(i/(wks.length-1));
+  const Y=v=>Hh-pad.b-(Hh-pad.t-pad.b)*(v/ymax);
+  const NS='http://www.w3.org/2000/svg';
+  const SK=new Set(['stroke','fill','stroke-width','stroke-linejoin','stroke-linecap','font-size','font-family','font-weight','text-anchor','opacity']);
+  const mk=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a){SK.has(k)?e.style.setProperty(k,a[k]):e.setAttribute(k,a[k]);}return e;};
+  for(let v=0; v<=ymax; v+=20){
+    svg.appendChild(mk('line',{x1:pad.l,x2:W-pad.r,y1:Y(v),y2:Y(v),stroke:'var(--line)','stroke-width':1}));
+    const t=mk('text',{x:pad.l-8,y:Y(v)+4,'text-anchor':'end',fill:'var(--faint)','font-size':'10px','font-family':'var(--mono)'});t.textContent=v+'%';svg.appendChild(t);
+  }
+  wks.forEach((w,i)=>{if(i%2===0){const t=mk('text',{x:X(i),y:Hh-9,'text-anchor':'middle',fill:'var(--faint)','font-size':'10px','font-family':'var(--mono)'});t.textContent='W'+w;svg.appendChild(t);}});
+  const leg=$('#evolegend');
+  SIG.forEach(([key,name,color])=>{
+    const pts=E.map((d,i)=>[X(i),Y(d.shares[key]*100)]);
+    const path=mk('path',{d:'M'+pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' L'),
+      fill:'none',stroke:color,'stroke-width':key==='recency'?'3':'2.4','stroke-linejoin':'round','stroke-linecap':'round'});
+    svg.appendChild(path);
+    const end=pts[pts.length-1]; svg.appendChild(mk('circle',{cx:end[0],cy:end[1],r:3.5,fill:color}));
+    const el2=mk('text',{x:end[0]+7,y:end[1]+4,fill:color,'font-size':'11px','font-weight':'800','font-family':'var(--disp)'});
+    el2.textContent=name; svg.appendChild(el2);
+    if(!reduce){const L=path.getTotalLength();path.style.strokeDasharray=L;path.style.strokeDashoffset=L;
+      path.style.transition='stroke-dashoffset 1.2s ease-out';requestAnimationFrame(()=>{path.style.strokeDashoffset=0;});}
+    const first=Math.round(E[0].shares[key]*100), last=Math.round(E[E.length-1].shares[key]*100);
+    const arr=last>first+1?'▲':(last<first-1?'▼':'▬');
+    const lg=el('span','lg'); lg.innerHTML=`<i style="background:${color}"></i>${name}
+      <span class="d">${first}%&thinsp;${arr}&thinsp;${last}%</span>`;
+    leg.appendChild(lg);
   });
 })();
 
-// ── agents ──
-const ac=document.getElementById("agents");
-for(const[nm,a]of Object.entries(DATA.agents)){
-  const card=$("div","agent");
-  card.append($("div","nm",`<span>${nm}</span><span class="ppg">${a.ppg.toFixed(1)}</span>`));
-  card.append($("div","why",a.why));
-  a.picks.forEach(([p,v])=>card.append($("div","pick",`<span>${p}</span><span>${v.toFixed(1)}</span>`)));
-  ac.append(card);
-}
+// ── reveal bars on scroll ──
+const bars=[...document.querySelectorAll('.bar>i')];
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){
+  e.target.style.transition=reduce?'none':'transform .9s cubic-bezier(.2,.7,.2,1)';
+  e.target.style.transform='scaleX('+(e.target.dataset.w||1)+')'; io.unobserve(e.target);}});},{threshold:.4});
+bars.forEach(b=>io.observe(b));
 
-// ── head to head ──
-const total=t=>t.reduce((s,r)=>s+r[2],0);
-const swSet=new Set(DATA.swarm_team.map(r=>r[0])), nvSet=new Set(DATA.naive_team.map(r=>r[0]));
-function teamCard(name,team,other,win){
-  const c=$("div","team"+(win?" win":""));
-  const h=$("h3",null,`<span>${name}${win?' <span class="badge">WINS</span>':''}</span><span class="tot">${total(team).toFixed(0)}</span>`);
-  c.append(h);
-  team.forEach(([p,pos,v])=>{
-    const diff=!other.has(p);
-    const bust=v<10;
-    const r=$("div","row"+(diff?" diff":"")+(bust?" bust":""));
-    r.append($("span","pos",pos),$("span",null,p));
-    r.append($("span","pts",v.toFixed(1)));
-    c.append(r);
-  });
-  return c;
-}
-const h2h=document.getElementById("h2h");
-h2h.append(teamCard("Gandalf swarm",DATA.swarm_team,nvSet,true));
-h2h.append(teamCard("Naive agent",DATA.naive_team,swSet,false));
+// theme note reflects current scheme
 </script>

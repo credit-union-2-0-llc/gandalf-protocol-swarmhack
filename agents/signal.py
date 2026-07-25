@@ -13,6 +13,7 @@ duplicate gift can't be argued past by clever reasoning — a veto, not a vote.
 """
 from statistics import pstdev
 
+import config
 from contracts import Score, CurriculumBatch
 from llm import call_llm
 
@@ -73,6 +74,21 @@ GROSS_BUDGET_MULT = 1.5  # beyond this x the ceiling, over-budget is a HARD fail
 # Below this many samples, a category's mean is too noisy for the coach to chase.
 MIN_SAMPLES_PER_CATEGORY = 3
 
+# ── Judge panel (Round-2 Phase 2, gated by config.JUDGE_PANEL_SIZE = K) ──
+# When K>1, judge() runs K INDEPENDENT sub-judge LLM calls and takes majority vote on each
+# binary LLM-derived sub-check (fit_ok/surprise_ok/effort_ok). K=1 (default) is byte-for-byte
+# the original single call. Two knobs give the sub-judges genuine independence so they don't
+# collapse onto one identical answer: a per-call temperature bump and a rotating "lens" hint
+# appended to the user message. budget_ok is NEVER voted — it stays deterministic arithmetic,
+# and the duplicate/gross-budget hard gates still fire AFTER the vote (a veto, not a vote).
+_PANEL_TEMP_STEP = 0.1   # sub-judge i uses temperature 0.2 + i*step; i=0 keeps the canonical 0.2
+_PANEL_LENSES = [
+    "",  # first sub-judge: the canonical, un-hinted read (identical to the single-call prompt)
+    "LENS: on this pass, weight CONSTRAINT VIOLATIONS and duplicates most heavily.",
+    "LENS: on this pass, weight whether the reasoning cites a SPECIFIC, non-obvious personal "
+    "detail most heavily.",
+]
+
 
 def _levenshtein(a: str, b: str) -> int:
     a, b = a.lower().strip(), b.lower().strip()
@@ -128,26 +144,71 @@ def _compute_thoughtfulness(checks: dict, gross_over_budget: bool = False) -> fl
     return raw
 
 
-def judge(persona, proposal, reaction, playbook_len: int = 0) -> Score:
-    already_has = persona.hidden_truth.get("already_has", [])
+# ─────────────────────────── FROZEN CONTRACT (Round-2) ───────────────────────────
+# judge(persona, proposal, reaction, playbook_len: int = 0) -> Score  is STABLE.
+# Round-2 Phase 2 (judge panel) may change this function's INTERNALS ONLY — it must keep
+# this exact positional signature and keep returning a `Score` with the same fields, so
+# Phase 1 (Best-of-N verifier), runner.py::_episode_for, and evals/run_evals.py (which call
+# judge() with 3 or 4 positional args) all keep working unchanged. Do NOT rename params,
+# add required args, or change the return type. New panel config goes in a module-level
+# constant (e.g. JUDGE_PANEL_SIZE), not the signature.
+# ──────────────────────────────────────────────────────────────────────────────────
+def _judge_once(persona, proposal, reaction, playbook_len: int,
+                temperature: float = 0.2, lens: str = "") -> dict:
+    """One judge LLM call → the raw binary sub-checks + rationale from a single model read.
+    judge() calls this once (K=1) or K times (panel). Context isolation is unchanged: the
+    judge sees ONLY hidden_truth + gifts + reaction — never proposal.agent_id/strategy_tag or
+    persona.profile (see module docstring). `lens` optionally appends an angle hint to steer an
+    independent sub-judge; empty lens + temperature=0.2 reproduces the original prompt exactly."""
     gifts = proposal.gifts  # never proposal.strategy_tag/agent_id — see module docstring
     user = (f"TRUE PREFERENCES: {persona.hidden_truth}\n"
             f"GIFTS: {gifts}\n"
             f"REACTION: {reaction.verdict} — {reaction.quote}")
+    if lens:
+        user += f"\n\n{lens}"
     out = call_llm("judge", JUDGE_SYSTEM, user, ctx={"playbook_len": playbook_len},
-                   temperature=0.2)
+                   temperature=temperature)
+    return {"fit_ok": bool(out.get("fit_ok", False)),
+            "surprise_ok": bool(out.get("surprise_ok", False)),
+            "effort_ok": bool(out.get("effort_ok", False)),
+            "rationale": out.get("rationale", "")}
+
+
+def judge(persona, proposal, reaction, playbook_len: int = 0) -> Score:
+    already_has = persona.hidden_truth.get("already_has", [])
+    gifts = proposal.gifts  # never proposal.strategy_tag/agent_id — see module docstring
+    k = max(1, int(getattr(config, "JUDGE_PANEL_SIZE", 1) or 1))
+
+    if k == 1:
+        # K=1 (default): a single sub-judge at the canonical temperature — byte-for-byte the
+        # pre-panel behavior (same prompt, same ctx, same temperature=0.2, same rationale path).
+        votes = [_judge_once(persona, proposal, reaction, playbook_len)]
+    else:
+        # K>1: K genuinely-independent sub-judges (temperature bump + rotating lens hint).
+        votes = [_judge_once(persona, proposal, reaction, playbook_len,
+                             temperature=round(0.2 + _PANEL_TEMP_STEP * i, 3),
+                             lens=_PANEL_LENSES[i % len(_PANEL_LENSES)])
+                 for i in range(k)]
+
+    def _majority(key: str) -> bool:
+        # Majority = STRICTLY more than K/2 sub-judges voted True. For K=1 this is just the
+        # single vote; for K=3, needs ≥2. Ties (even K) resolve to False.
+        return sum(1 for v in votes if v[key]) * 2 > k
 
     checks = {
-        "fit_ok": bool(out.get("fit_ok", False)) and not _duplicate_veto(gifts, already_has),
-        "surprise_ok": bool(out.get("surprise_ok", False)),
-        "effort_ok": bool(out.get("effort_ok", False)),
+        # Only the three LLM-derived checks go to the vote; the duplicate veto is still a
+        # deterministic HARD veto applied AFTER the vote (a veto, not a vote).
+        "fit_ok": _majority("fit_ok") and not _duplicate_veto(gifts, already_has),
+        "surprise_ok": _majority("surprise_ok"),
+        "effort_ok": _majority("effort_ok"),
+        # budget_ok is arithmetic, computed ONCE — never part of the panel vote.
         "budget_ok": _budget_ok(gifts, persona.budget),
     }
     return Score(proposal_id=proposal.proposal_id,
-                 dims={k: (1.0 if v else 0.0) for k, v in checks.items()},
+                 dims={name: (1.0 if v else 0.0) for name, v in checks.items()},
                  thoughtfulness=_compute_thoughtfulness(
                      checks, gross_over_budget=_grossly_over_budget(gifts, persona.budget)),
-                 rationale=out.get("rationale", ""))
+                 rationale=votes[0].get("rationale", ""))
 
 
 def _category_stats(store) -> dict:

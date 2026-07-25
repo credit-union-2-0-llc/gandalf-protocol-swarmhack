@@ -278,17 +278,33 @@ class Swarm:
         self.agents = [GiftAgent(t) for t in tags]
         self.solo = solo
 
-    def distill(self, top_episodes: list[dict], playbook):
+    def distill(self, top_episodes: list[dict], playbook,
+                bottom_episodes: list | None = None, held_out_eval=None):
         """The 'learn together' moment: fold winning PATTERNS into the shared playbook.
         Skipped in solo mode so the ablation shows the difference.
 
         EDV (2606.24428): the distiller reads Jasper's SCORES, not its own opinion of its
         work — decoupling distiller from executor avoids the Self-Confirmation Trap. Our
         Warren-distills / Jasper-judges split already enforces this; we keep it by ranking
-        episodes purely on the judge's thoughtfulness."""
+        episodes purely on the judge's thoughtfulness.
+
+        Round-2 Phase 3 (ACE 2510.04618) — behind config.ACE_CURATION (default OFF, so this
+        signature stays 100% backward-compatible and the legacy path below is byte-identical):
+        when ON, run an explicit Reflector→Curator with incremental DELTAS + a per-lesson
+        held-out gate instead of the monolithic re-distill. `bottom_episodes` feeds GEPA-style
+        failure reflection ("avoid" lessons); `held_out_eval(playbook)->float` is the pluggable
+        Voyager/RSEA gate (None => pass-through no-op; the REAL gate only runs deployed where a
+        live LLM judge exists). ACE's thesis: monolithic rewrites cause "context collapse" —
+        the playbook erodes into shorter, vaguer text round over round; localized deltas +
+        confidence-gated prune preserve the accumulated detail. See _distill_ace()."""
         if self.solo or not top_episodes:
             return
 
+        import config
+        if config.ACE_CURATION:
+            return self._distill_ace(top_episodes, playbook, bottom_episodes, held_out_eval)
+
+        # ── Legacy path (config.ACE_CURATION OFF, the default) — UNCHANGED from Round-1 ──
         # Ground the distiller in WHY each winner landed: strategy, the gift + its reasoning,
         # the recipient's reaction, and the judge's per-dimension rationale — not just a
         # gift list. Specific inputs → specific, transferable lessons.
@@ -364,3 +380,179 @@ class Swarm:
         ranked = sorted(enumerate(playbook.entries),
                         key=lambda ie: (_entry_conf(ie[1]), ie[0]), reverse=True)
         playbook.entries = [e for _, e in ranked[:PLAYBOOK_CAP]]
+
+    # ═════════════════════════════════════════════════════════════════════════════
+    # Round-2 Phase 3 — ACE delta-curation (config.ACE_CURATION). Everything below is
+    # NEW and only reachable when the flag is ON; the legacy distill path never enters
+    # here, so flag-OFF behavior is untouched. Kept BELOW the distillation region so the
+    # parallel Phase-1 (GiftAgent.propose) merge stays conflict-free.
+    #
+    # Grounding — ACE (Agentic Context Engineering, arXiv 2510.04618): monolithic
+    # "rewrite the whole memory each step" distillation suffers CONTEXT COLLAPSE — the
+    # curated context degrades into shorter, blander summaries that shed the very
+    # specifics that made lessons transferable. ACE's fix is a Reflector→Curator split
+    # that emits SMALL, LOCALIZED deltas (add / refine-in-place / remove) against a
+    # structured, itemized playbook, plus dedup + confidence-gated bounded size. We
+    # already had delta-add + supersede + Wilson prune; Phase 3 completes the loop with
+    # GEPA-style failure reflection, an explicit remove delta, and a per-lesson gate.
+    # ═════════════════════════════════════════════════════════════════════════════
+
+    # Reflector prompt for the FAILURE half (GEPA 2507.19457): read the LOWEST-scoring
+    # episodes and extract WHY they fell short as "avoid" rules — the negative signal a
+    # winners-only distiller never sees.
+    _REFLECT_FAIL_SYSTEM = """You diagnose why the LOWEST-scoring gift episodes this round \
+FELL SHORT, so that ANY agent AVOIDS the same mistake for SIMILAR recipients next round.
+
+Output 1-3 lessons as itemized DELTAS (small, standalone AVOID rules) — never a rewrite of \
+prior lessons. Each lesson MUST be:
+- An AVOID rule naming the FAILURE MODE: "avoid generic gift cards when the profile names a \
+concrete hobby — they read as low-effort" — NOT a platitude like "be more thoughtful".
+- Tied to an observable signal: the mismatch between the gift and a stated interest/constraint, \
+the recipient's negative reaction, or the judge's rationale for the low score.
+- A PATTERN, not the one bad product: capture WHY it flopped, not just the item name.
+
+Output JSON: {"lessons":[{"text": "<one specific, transferable avoid rule>"}]}"""
+
+    # Remove-delta thresholds: a lesson with enough trials to be sure AND zero wins has a
+    # Wilson lower bound ~0 → it is a PROVEN loser, not merely new. Drop it (ACE remove delta)
+    # rather than let it linger and mislead. Conservative so a young lesson is never culled.
+    _REMOVE_MIN_TRIALS = 3
+    _REMOVE_CONF_FLOOR = 0.15
+
+    def _distill_ace(self, top_episodes, playbook, bottom_episodes, held_out_eval):
+        """ACE path: Reflector (winners→'do', failures→'avoid') → Curator (add/refine/remove,
+        each behind the per-lesson gate) → confidence-gated prune. Returns None."""
+        candidates = []
+
+        # Reflector #1 — winners → "do" lessons (same inputs/prompt as the legacy distiller,
+        # so the "do" half of an ACE run matches the Round-1 lessons).
+        do_lessons, top_sids, top_wins, top_trials = self._reflect(top_episodes, playbook, "win")
+        candidates += [{"text": t, "polarity": "do", "source_ids": top_sids,
+                        "wins": top_wins, "trials": top_trials} for t in do_lessons]
+
+        # Reflector #2 — failures → "avoid" lessons (GEPA). Only when bottoms are supplied;
+        # keeping this optional preserves the frozen distill(top, playbook) call.
+        if bottom_episodes:
+            avoid_lessons, bot_sids, _, bot_trials = self._reflect(bottom_episodes, playbook, "fail")
+            candidates += [{"text": t, "polarity": "avoid", "source_ids": bot_sids,
+                            "wins": 0, "trials": bot_trials} for t in avoid_lessons]
+
+        # Curator — apply each candidate as an incremental delta, gated per-lesson.
+        for cand in candidates:
+            if not _is_specific(cand["text"]):
+                continue  # drop platitudes rather than fossilize them
+            self._curate_one(playbook, cand, held_out_eval)
+
+        # Remove-delta pass: cull proven-losing lessons, then bound size (unchanged _prune).
+        self._curate_removals(playbook)
+        self._prune(playbook)
+
+    def _reflect(self, episodes, playbook, mode):
+        """Build the grounded episode digest and call the distiller for one reflection mode
+        ('win' → DISTILL_SYSTEM, 'fail' → _REFLECT_FAIL_SYSTEM). Returns
+        (lesson_texts, source_ids, wins, trials)."""
+        lines = []
+        for e in episodes:
+            gifts = e.get("proposal", {}).get("gifts", [])
+            g = gifts[0] if gifts else {}
+            score = e.get("score", {})
+            react = e.get("reaction", {})
+            lines.append(
+                f"- strategy={e.get('strategy_tag','?')} "
+                f"gift={g.get('name','?')} ({g.get('category','?')}) "
+                f"why={g.get('reasoning','')!r} "
+                f"reaction={react.get('verdict','?')} "
+                f"thoughtfulness={score.get('thoughtfulness','?')} "
+                f"judge={score.get('rationale','')!r}")
+        source_ids = [e["episode_id"] for e in episodes if e.get("episode_id")]
+        trials = len(episodes)
+        if mode == "win":
+            system, header = DISTILL_SYSTEM, "TOP EPISODES THIS ROUND:\n"
+            wins = sum(1 for e in episodes
+                       if float(e.get("score", {}).get("thoughtfulness", 0.0)) >= WIN_THRESHOLD)
+        else:
+            system, header = self._REFLECT_FAIL_SYSTEM, "LOWEST-SCORING (FAILED) EPISODES THIS ROUND:\n"
+            wins = 0  # failures don't reinforce; provenance still tracked for audit
+        out = call_llm("distiller", system, header + "\n".join(lines),
+                       ctx={"playbook_len": playbook.version})
+        texts = [(l.get("text") or "").strip() for l in out.get("lessons", [])]
+        return [t for t in texts if t], source_ids, wins, trials
+
+    def _curate_one(self, playbook, cand, held_out_eval):
+        """Apply ONE candidate as an add / refine-in-place / remove-then-add delta, admitting
+        it only through the per-lesson gate. Returns 'applied' or 'rejected'.
+
+        Delta decision (vs the closest existing lesson by difflib ratio):
+          • near-dup (ratio ≥ SUPERSEDE_RATIO), SAME polarity → refine-in-place (accumulate).
+          • near-dup, OPPOSITE polarity → CONTRADICTION: remove the stale lesson, add the new
+            one (an 'avoid' rule negates a near-identical 'do' rule, and vice-versa). This is
+            the ACE remove delta that plain supersede can't express.
+          • otherwise → net-new append."""
+        text = cand["text"]
+        polarity = cand.get("polarity", "do")
+        sids, wins, trials = cand.get("source_ids", []), cand.get("wins", 0), cand.get("trials", 0)
+        i, ratio = self._best_match(playbook, text)
+
+        if i >= 0 and ratio >= SUPERSEDE_RATIO:
+            target_pol = playbook.entries[i].get("polarity", "do")
+            if polarity != target_pol:
+                def op():
+                    playbook.remove(i)
+                    self._append(playbook, text, sids, wins, trials, polarity)
+            else:
+                def op():
+                    playbook.refine_in_place(i, text, sids, wins, trials)
+                    playbook.entries[i]["polarity"] = polarity
+        else:
+            def op():
+                self._append(playbook, text, sids, wins, trials, polarity)
+
+        # Per-lesson gate (Voyager/RSEA). None => pass-through no-op (MOCK / default): apply
+        # unconditionally and deterministically. A real held_out_eval (deployed only, needs the
+        # live LLM judge) applies-measure-rollback so a lesson that LOWERS held-out is rejected.
+        if held_out_eval is None:
+            op()
+            return "applied"
+        import copy
+        before = held_out_eval(playbook)
+        snap_entries = copy.deepcopy(playbook.entries)
+        snap_version = playbook.version
+        op()
+        if held_out_eval(playbook) < before:
+            playbook.entries = snap_entries      # reject: this lesson didn't help held-out
+            playbook.version = snap_version
+            return "rejected"
+        return "applied"
+
+    def _curate_removals(self, playbook):
+        """Remove-delta pass: drop PROVEN-losing 'do' recommendations (enough trials, zero wins
+        → Wilson bound below the floor) — a "do X" rule tried repeatedly that never rode a
+        winning episode is a bad recommendation. 'avoid' lessons are EXEMPT: they encode
+        negative knowledge and have wins==0 by construction, so culling them on zero-wins would
+        erase every failure lesson. Contradiction removals already happened in _curate_one;
+        this catches do-rules that simply never win. version is monotonic, so removal never
+        rewinds the learning curve."""
+        playbook.remove(
+            lambda e: e.get("polarity", "do") != "avoid"
+            and e.get("trials", 0) >= self._REMOVE_MIN_TRIALS
+            and e.get("wins", 0) == 0
+            and _entry_conf(e) < self._REMOVE_CONF_FLOOR)
+
+    @staticmethod
+    def _best_match(playbook, text):
+        """Index + difflib ratio of the existing entry most similar to `text` (or (-1, 0.0))."""
+        best_i, best_ratio, nt = -1, 0.0, _norm(text)
+        for idx, e in enumerate(playbook.entries):
+            r = difflib.SequenceMatcher(None, nt, _norm(e.get("text", ""))).ratio()
+            if r > best_ratio:
+                best_i, best_ratio = idx, r
+        return best_i, best_ratio
+
+    @staticmethod
+    def _append(playbook, text, sids, wins, trials, polarity):
+        """Net-new lesson via the contract's add() (handles version + timestamp), then attach
+        the confidence provenance + polarity the retrieval ranker / curator read. Mirrors the
+        legacy net-new branch in _merge_or_add, plus the ACE polarity tag."""
+        playbook.add(text, sids)
+        e = playbook.entries[-1]
+        e["wins"], e["trials"], e["polarity"] = wins, trials, polarity

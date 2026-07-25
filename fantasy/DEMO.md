@@ -1,52 +1,52 @@
-# Gandalf on Fantasy Football — demo
+# Gandalf on Fantasy Football — the self-improvement demo
 
-**One line:** Gandalf's self-evolving swarm of arguing agents learns to draft/roster a fantasy
-team — judged not by an LLM's opinion but by **ground truth: actual NFL points** — and its
-decisions measurably **climb** as it learns.
+**One line:** Gandalf's arguing agents draft a fantasy team, study their own mistakes, distill a
+playbook, and replay the *same* season with what they learned — the rookie misses the playoffs, the
+veteran clinches. The judge is ground truth (actual NFL points), so the learning is unfakeable.
 
 ## Run it
 ```
-python fantasy/run.py
+python fantasy/season.py        # prints the leave-one-season-out results
+python fantasy/export_demo.py    # regenerates fantasy/demo_data.json (what the UI renders)
 ```
-Produces the table below + `fantasy/chart_fantasy_learning.png`.
+UI: `fantasy/ui.html` (self-contained) — served live at `/fantasy`, also an Artifact.
 
-## What the demo shows (three beats)
+## The arc (what the page walks through)
+1. **The scoreboard.** Same season, same player pool, same schedule, full **PPR** lineup (incl. K + D/ST).
+   One agent (drafts the hot hand) scores **95.9 pts/wk — misses the playoffs (8th)**. The swarm's
+   veteran (learned influence) scores **100.4 — makes them (5th)**: **+4.5 pts/wk is the difference
+   between a playoff seed and watching from home.**
+2. **The film room.** Four agents argue — Recency, Season, Volume, Trend. The swarm distills an
+   influence share and reality *reweights* the argument: full-season production earns ~**50%**, the
+   one-agent "start whoever's hot" instinct gets demoted to ~22%.
+3. **The tape.** Replaying 2025 week-by-week, the veteran teams pull away and claim the playoff seeds.
+4. **The draft board.** The picks they disagreed on: one-agent *traps* (Michael Pittman, Courtland
+   Sutton — hot early on TDs, then faded) vs veteran *gems* (Josh Jacobs, Kyren Williams — volume
+   backs the rookie undervalued, then produced). Reality settled every argument.
+5. **The integrity check** (say this if a judge probes "is this real?").
 
-**1. Arguing agents.** Four agents each value players by a different philosophy and genuinely
-disagree — Recency ("who's hot"), Season ("full-season average"), Volume ("opportunity =
-targets+carries"), Trend ("usage rising"). Their own top-10s score very differently (13.3–20.8
-real PPG). None is right alone.
+## Why it's honest — the three guarantees (all true by construction)
+- **Walk-forward.** Every draft reads only weeks 1-3; it's graded on weeks 4-14 — games that hadn't
+  happened at decision time. The outcome is never visible when the choice is made. No lookahead.
+- **Held-out influence.** The influence share is four signal weights, fit on the *other* seasons via
+  leave-one-season-out — it never sees the season it's scored on. Four numbers can't memorize a
+  player's weekly box score.
+- **It generalizes.** The identical weights lift *every* season (lift/wk): 2022 **+10.3**, 2023
+  **+5.7**, 2024 **+11.7**, 2025 **+4.5** — and in 2022/2024 that's a clean 6-8 → 8-6. Memorizing one
+  season would do nothing for the others.
 
-**2. The judge is ground truth.** Unlike the gift domain (where an LLM guesses "thoughtfulness"),
-here the judge is **reality** — the actual rest-of-season points the picked players scored. The
-swarm learns against outcomes, not opinions. This is fantasy's superpower as a Gandalf domain.
+The full PPR lineup adds a ~13-pt/wk K+D/ST "wash" to both sides, so the *records* compress (7-7 in
+two seasons) while the **playoff outcome still flips** — that's the honest floor story: consistency,
+not ceiling, gets you in.
 
-**3. The learning curve CLIMBS (the payoff).** The swarm starts naive (just Recency, like the solo
-baseline). Each distillation round it adopts the agent whose signal most improves its fit to real
-outcomes, and refits. Trained on **~8,900 real player-week decisions across 4 seasons (2022–24)
-and the full player universe** (every team's rosters + the waiver pool), measured on a
-**held-out 2025 season it never trained on**:
-
-| round | swarm knows… | top-10 starters' REAL PPG | held-out MAE |
-|---|---|---:|---:|
-| 0 | Recency (naive) | 17.0 | 3.08 |
-| 1 | +Season | 19.3 | 2.90 |
-| 2 | +Volume | **21.7** | 2.88 |
-| 3 | +Trend | 20.6 | 2.87 |
-
-- **Solo agent (no learning): flat at 17.0.**
-- **Swarm (self-evolved): climbs to 20.6** — each starter scores **+3.6 real points/week** more.
-- The swarm beats **every** individual agent (best single = Volume at 20.8).
-
-## Why it's honest (say this if asked)
-- Quality is measured **out-of-sample** on 2025 — the swarm trains on 2023–24 only.
-- The metric is **decision quality** (top picks' actual points) + prediction error, not a curve
-  we tuned. Full-pool *ranking* is actually efficient (recency ~ ties everything) — we don't
-  hide that; the climb is real because the learned *combination* genuinely beats the naive signal.
-- Trend (the weakest signal, +0.08 corr) is kept in even though it nudges the top-10 down from
-  the +Volume peak — we didn't trim it to force a monotonic line.
+## The numbers behind it
+- Influence fit on **~12,900 walk-forward (player, week) decisions** across three seasons (skill players).
+- 12-team league (6 one-agent GMs vs 6 veteran GMs), 16-man rosters, start 1 QB / 2 RB / 2 WR / 1 TE /
+  1 FLEX / 1 K / 1 D/ST. **PPR** scoring (confirmed from the data: points = yards + 1/reception).
+- Standings by **all-play win%** (fraction of the field you outscore each week) — removes schedule luck.
+- **My Team** connects a user's real ESPN league and auto-configures *their* scoring + lineup slots.
 
 ## How it maps to Gandalf
-Same loop as the gift domain — propose → judge → distill → improve — swapped onto a domain with a
-real reward signal. The core swarm/judge/distill machinery is the product; fantasy is one demo
-domain (Kirk/Jasper/Violet are building others).
+Same loop as the gift domain — propose → argue → judge → distill → improve — on a domain with a
+**real** reward signal instead of an LLM's opinion. The swarm/judge/distill machinery is the product;
+fantasy is one demo domain (Kirk/Jasper/Violet are building others).

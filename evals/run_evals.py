@@ -67,7 +67,12 @@ def check_canary(store):
 
 
 def check_calibration(gold_path):
-    """κ of the real judge vs hand labels. Skips gracefully if no key / empty gold set."""
+    """κ of the real judge vs hand labels. Skips gracefully if no key / empty gold set.
+
+    Round-2 note: this grades whatever signal.judge() does, so with JUDGE_PANEL_SIZE>1 it
+    re-grades the *panel's* majority-voted verdicts against the gold set unchanged — no logic
+    change here. Run it post-deploy (real key, e.g. via /api/eval) to confirm the panel's κ vs
+    the gold set holds or improves over the single-judge baseline."""
     if not os.path.exists(gold_path):
         return ("calibration", None, "no gold_set.json yet (Jasper: fill it — see #5)")
     gold = json.load(open(gold_path)).get("examples", [])

@@ -81,6 +81,12 @@ class Store:
         eps = self.training_episodes(condition)
         return sorted(eps, key=lambda e: e["score"]["thoughtfulness"], reverse=True)[:n]
 
+    def bottom_episodes(self, n=5, condition=None):
+        """[Round-2 Phase 3] Lowest-thoughtfulness training episodes (parity with store.py)
+        so the ACE Reflector can mine failures for 'avoid' lessons. Additive."""
+        eps = self.training_episodes(condition)
+        return sorted(eps, key=lambda e: e["score"]["thoughtfulness"])[:n]
+
     def thoughtfulness_series(self, condition=None, validation=False, window=10):
         src = self.validation_episodes() if validation else self.training_episodes(condition)
         vals = [e["score"]["thoughtfulness"] for e in src]

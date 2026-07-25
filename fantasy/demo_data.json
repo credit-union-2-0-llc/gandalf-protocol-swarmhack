@@ -1,299 +1,430 @@
 {
   "meta": {
-    "train_decisions": 8931,
-    "held_decisions": 3028,
-    "seasons_train": "2022-2024",
-    "season_held": 2025,
-    "roster_size": 12
+    "focus_season": 2025,
+    "train": "leave-one-season-out",
+    "n_teams": 12,
+    "playoff_spots": 6,
+    "games": 14,
+    "train_decisions": 12943,
+    "scoring": "PPR (1 pt / reception)",
+    "roster": "16-man roster; start 1 QB / 2 RB / 2 WR / 1 TE / 1 FLEX / 1 K / 1 D/ST",
+    "draft_note": "drafted on weeks 1-3 form; graded weeks 4-14 (never seen at draft)"
   },
-  "climb": [
+  "headline": {
+    "rookie": {
+      "record": "7-7",
+      "ppw": 95.9,
+      "avg_place": 7.5,
+      "made_playoffs": false
+    },
+    "veteran": {
+      "record": "7-7",
+      "ppw": 100.4,
+      "avg_place": 5.5,
+      "made_playoffs": true
+    },
+    "lift_ppw": 4.5
+  },
+  "playbook": {
+    "naive": "recency",
+    "lessons": [
+      {
+        "signal": "season",
+        "weight": 2.87,
+        "share": 0.487,
+        "rule": "Trust full-season production over a hot three weeks.",
+        "is_naive": false
+      },
+      {
+        "signal": "recency",
+        "weight": 1.39,
+        "share": 0.236,
+        "rule": "Recent form still matters, but weight it, don't worship it.",
+        "is_naive": true
+      },
+      {
+        "signal": "volume",
+        "weight": 0.85,
+        "share": 0.145,
+        "rule": "Chase opportunity \u2014 targets + carries \u2014 not last week's points.",
+        "is_naive": false
+      },
+      {
+        "signal": "opp_trend",
+        "weight": 0.78,
+        "share": 0.132,
+        "rule": "Rising usage is a breakout signal before the box score catches up.",
+        "is_naive": false
+      }
+    ]
+  },
+  "evolution": [
     {
-      "label": "naive\n(Recency)",
-      "ppg": 17.0,
-      "mae": 3.08,
-      "adopted": [
-        "Recency"
-      ]
+      "week": 5,
+      "shares": {
+        "recency": 0.692,
+        "season": 0.013,
+        "volume": 0.283,
+        "opp_trend": 0.012
+      }
     },
     {
-      "label": "+Season",
-      "ppg": 19.3,
-      "mae": 2.9,
-      "adopted": [
-        "Recency",
-        "Season"
-      ]
+      "week": 6,
+      "shares": {
+        "recency": 0.456,
+        "season": 0.254,
+        "volume": 0.289,
+        "opp_trend": 0.001
+      }
     },
     {
-      "label": "+Volume",
-      "ppg": 21.7,
-      "mae": 2.88,
-      "adopted": [
-        "Recency",
-        "Season",
-        "Volume"
-      ]
+      "week": 7,
+      "shares": {
+        "recency": 0.226,
+        "season": 0.466,
+        "volume": 0.251,
+        "opp_trend": 0.057
+      }
     },
     {
-      "label": "+Trend",
-      "ppg": 20.6,
-      "mae": 2.87,
-      "adopted": [
-        "Recency",
-        "Season",
-        "Volume",
-        "Trend"
-      ]
+      "week": 8,
+      "shares": {
+        "recency": 0.225,
+        "season": 0.464,
+        "volume": 0.248,
+        "opp_trend": 0.063
+      }
+    },
+    {
+      "week": 9,
+      "shares": {
+        "recency": 0.174,
+        "season": 0.554,
+        "volume": 0.197,
+        "opp_trend": 0.075
+      }
+    },
+    {
+      "week": 10,
+      "shares": {
+        "recency": 0.16,
+        "season": 0.544,
+        "volume": 0.196,
+        "opp_trend": 0.1
+      }
+    },
+    {
+      "week": 11,
+      "shares": {
+        "recency": 0.138,
+        "season": 0.547,
+        "volume": 0.198,
+        "opp_trend": 0.117
+      }
+    },
+    {
+      "week": 12,
+      "shares": {
+        "recency": 0.142,
+        "season": 0.533,
+        "volume": 0.194,
+        "opp_trend": 0.132
+      }
+    },
+    {
+      "week": 13,
+      "shares": {
+        "recency": 0.168,
+        "season": 0.504,
+        "volume": 0.197,
+        "opp_trend": 0.131
+      }
+    },
+    {
+      "week": 14,
+      "shares": {
+        "recency": 0.165,
+        "season": 0.513,
+        "volume": 0.186,
+        "opp_trend": 0.135
+      }
     }
   ],
-  "solo_ppg": 17.0,
-  "solo_mae": 3.08,
-  "swarm_ppg": 20.6,
-  "swarm_mae": 2.87,
-  "agents": {
-    "Recency": {
-      "team": [
-        {
-          "name": "Puka Nacua",
-          "pos": "WR",
-          "actual": 16.6
-        },
-        {
-          "name": "Amon-Ra St. Brown",
-          "pos": "WR",
-          "actual": 15.5
-        },
-        {
-          "name": "Jonathan Taylor",
-          "pos": "RB",
-          "actual": 24.4
-        },
-        {
-          "name": "Christian McCaffrey",
-          "pos": "RB",
-          "actual": 25.8
-        },
-        {
-          "name": "James Cook III",
-          "pos": "RB",
-          "actual": 15.9
-        }
-      ],
-      "ppg": 17.0
-    },
-    "Season": {
-      "team": [
-        {
-          "name": "Puka Nacua",
-          "pos": "WR",
-          "actual": 16.6
-        },
-        {
-          "name": "Josh Allen",
-          "pos": "QB",
-          "actual": 23.5
-        },
-        {
-          "name": "Christian McCaffrey",
-          "pos": "RB",
-          "actual": 25.8
-        },
-        {
-          "name": "Amon-Ra St. Brown",
-          "pos": "WR",
-          "actual": 15.5
-        },
-        {
-          "name": "Lamar Jackson",
-          "pos": "QB",
-          "actual": 9.1
-        }
-      ],
-      "ppg": 20.1
-    },
-    "Volume": {
-      "team": [
-        {
-          "name": "Christian McCaffrey",
-          "pos": "RB",
-          "actual": 25.8
-        },
-        {
-          "name": "Josh Jacobs",
-          "pos": "RB",
-          "actual": 15.0
-        },
-        {
-          "name": "Saquon Barkley",
-          "pos": "RB",
-          "actual": 13.8
-        },
-        {
-          "name": "Jonathan Taylor",
-          "pos": "RB",
-          "actual": 24.4
-        },
-        {
-          "name": "Bucky Irving",
-          "pos": "RB",
-          "actual": 3.6
-        }
-      ],
-      "ppg": 20.8
-    },
-    "Trend": {
-      "team": [
-        {
-          "name": "Quinshon Judkins",
-          "pos": "RB",
-          "actual": 11.9
-        },
-        {
-          "name": "Cam Skattebo",
-          "pos": "RB",
-          "actual": 8.2
-        },
-        {
-          "name": "De'Von Achane",
-          "pos": "RB",
-          "actual": 21.8
-        },
-        {
-          "name": "Alvin Kamara",
-          "pos": "RB",
-          "actual": 5.9
-        },
-        {
-          "name": "Mac Jones",
-          "pos": "QB",
-          "actual": 10.6
-        }
-      ],
-      "ppg": 13.3
-    }
-  },
-  "swarm_team": [
+  "series": [
     {
-      "name": "Puka Nacua",
-      "pos": "WR",
-      "actual": 16.6
+      "week": 4,
+      "rookie": 104.1,
+      "veteran": 100.1
     },
     {
-      "name": "Christian McCaffrey",
-      "pos": "RB",
-      "actual": 25.8
+      "week": 5,
+      "rookie": 94.8,
+      "veteran": 107.0
     },
     {
-      "name": "Jonathan Taylor",
-      "pos": "RB",
-      "actual": 24.4
+      "week": 6,
+      "rookie": 81.4,
+      "veteran": 104.2
     },
     {
-      "name": "James Cook III",
-      "pos": "RB",
-      "actual": 15.9
+      "week": 7,
+      "rookie": 108.5,
+      "veteran": 108.9
     },
     {
-      "name": "Bijan Robinson",
-      "pos": "RB",
-      "actual": 19.5
+      "week": 8,
+      "rookie": 88.6,
+      "veteran": 98.9
     },
     {
-      "name": "Josh Allen",
-      "pos": "QB",
-      "actual": 23.5
+      "week": 9,
+      "rookie": 104.9,
+      "veteran": 102.7
     },
     {
-      "name": "Amon-Ra St. Brown",
-      "pos": "WR",
-      "actual": 15.5
+      "week": 10,
+      "rookie": 92.7,
+      "veteran": 105.9
     },
     {
-      "name": "Lamar Jackson",
-      "pos": "QB",
-      "actual": 9.1
+      "week": 11,
+      "rookie": 101.6,
+      "veteran": 91.3
     },
     {
-      "name": "Patrick Mahomes",
-      "pos": "QB",
-      "actual": 20.5
+      "week": 12,
+      "rookie": 94.3,
+      "veteran": 93.4
     },
     {
-      "name": "Jalen Hurts",
-      "pos": "QB",
-      "actual": 18.2
+      "week": 13,
+      "rookie": 85.7,
+      "veteran": 99.3
     },
     {
-      "name": "Drake Maye",
-      "pos": "QB",
-      "actual": 19.5
-    },
-    {
-      "name": "Jahmyr Gibbs",
-      "pos": "RB",
-      "actual": 25.4
+      "week": 14,
+      "rookie": 98.6,
+      "veteran": 92.5
     }
   ],
-  "naive_team": [
+  "standings": [
     {
-      "name": "Puka Nacua",
-      "pos": "WR",
-      "actual": 16.6
+      "place": 1,
+      "kind": "veteran",
+      "win_pct": 0.76,
+      "ppw": 115.5
     },
     {
-      "name": "Amon-Ra St. Brown",
-      "pos": "WR",
-      "actual": 15.5
+      "place": 2,
+      "kind": "rookie",
+      "win_pct": 0.752,
+      "ppw": 114.7
     },
     {
-      "name": "Jonathan Taylor",
-      "pos": "RB",
-      "actual": 24.4
+      "place": 3,
+      "kind": "veteran",
+      "win_pct": 0.587,
+      "ppw": 103.2
     },
     {
-      "name": "Christian McCaffrey",
-      "pos": "RB",
-      "actual": 25.8
+      "place": 4,
+      "kind": "rookie",
+      "win_pct": 0.579,
+      "ppw": 106.4
     },
     {
-      "name": "James Cook III",
-      "pos": "RB",
-      "actual": 15.9
+      "place": 5,
+      "kind": "veteran",
+      "win_pct": 0.529,
+      "ppw": 100.2
     },
     {
-      "name": "George Pickens",
-      "pos": "WR",
-      "actual": 19.0
+      "place": 6,
+      "kind": "veteran",
+      "win_pct": 0.529,
+      "ppw": 101.2
     },
     {
-      "name": "Drake Maye",
-      "pos": "QB",
-      "actual": 19.5
+      "place": 7,
+      "kind": "rookie",
+      "win_pct": 0.471,
+      "ppw": 96.6
     },
     {
-      "name": "Dak Prescott",
-      "pos": "QB",
-      "actual": 20.7
+      "place": 8,
+      "kind": "veteran",
+      "win_pct": 0.43,
+      "ppw": 96.1
     },
     {
-      "name": "Bijan Robinson",
-      "pos": "RB",
-      "actual": 19.5
+      "place": 9,
+      "kind": "rookie",
+      "win_pct": 0.388,
+      "ppw": 90.0
     },
     {
-      "name": "Lamar Jackson",
-      "pos": "QB",
-      "actual": 9.1
+      "place": 10,
+      "kind": "veteran",
+      "win_pct": 0.364,
+      "ppw": 86.2
     },
     {
-      "name": "Jahmyr Gibbs",
-      "pos": "RB",
-      "actual": 25.4
+      "place": 11,
+      "kind": "rookie",
+      "win_pct": 0.306,
+      "ppw": 84.1
     },
     {
-      "name": "Rome Odunze",
-      "pos": "WR",
-      "actual": 7.4
+      "place": 12,
+      "kind": "rookie",
+      "win_pct": 0.306,
+      "ppw": 83.9
+    }
+  ],
+  "generalization": [
+    {
+      "year": 2022,
+      "is_focus": false,
+      "rookie_ppw": 92.3,
+      "veteran_ppw": 102.6,
+      "lift_ppw": 10.3,
+      "rookie_record": "6-8",
+      "veteran_record": "8-6",
+      "veteran_playoffs": 4,
+      "playoff_spots": 6
+    },
+    {
+      "year": 2023,
+      "is_focus": false,
+      "rookie_ppw": 98.6,
+      "veteran_ppw": 104.3,
+      "lift_ppw": 5.7,
+      "rookie_record": "7-7",
+      "veteran_record": "7-7",
+      "veteran_playoffs": 3,
+      "playoff_spots": 6
+    },
+    {
+      "year": 2024,
+      "is_focus": false,
+      "rookie_ppw": 93.5,
+      "veteran_ppw": 105.1,
+      "lift_ppw": 11.7,
+      "rookie_record": "6-8",
+      "veteran_record": "8-6",
+      "veteran_playoffs": 5,
+      "playoff_spots": 6
+    },
+    {
+      "year": 2025,
+      "is_focus": true,
+      "rookie_ppw": 95.9,
+      "veteran_ppw": 100.4,
+      "lift_ppw": 4.5,
+      "rookie_record": "7-7",
+      "veteran_record": "7-7",
+      "veteran_playoffs": 4,
+      "playoff_spots": 6
+    }
+  ],
+  "contrast": {
+    "rookie_reaches": [
+      {
+        "name": "Spencer Shrader",
+        "pos": "K",
+        "early_ppg": 14.7,
+        "rest_ppg": 1.2,
+        "rookie_rank": 48,
+        "veteran_rank": 75
+      },
+      {
+        "name": "Brandon Aubrey",
+        "pos": "K",
+        "early_ppg": 14.0,
+        "rest_ppg": 10.3,
+        "rookie_rank": 57,
+        "veteran_rank": 88
+      },
+      {
+        "name": "Zay Flowers",
+        "pos": "WR",
+        "early_ppg": 15.4,
+        "rest_ppg": 11.7,
+        "rookie_rank": 38,
+        "veteran_rank": 48
+      },
+      {
+        "name": "Aaron Rodgers",
+        "pos": "QB",
+        "early_ppg": 15.9,
+        "rest_ppg": 12.2,
+        "rookie_rank": 31,
+        "veteran_rank": 43
+      },
+      {
+        "name": "Emeka Egbuka",
+        "pos": "WR",
+        "early_ppg": 17.0,
+        "rest_ppg": 12.2,
+        "rookie_rank": 27,
+        "veteran_rank": 39
+      }
+    ],
+    "veteran_values": [
+      {
+        "name": "Bo Nix",
+        "pos": "QB",
+        "early_ppg": 13.5,
+        "rest_ppg": 19.0,
+        "rookie_rank": 68,
+        "veteran_rank": 52
+      },
+      {
+        "name": "Josh Jacobs",
+        "pos": "RB",
+        "early_ppg": 13.6,
+        "rest_ppg": 16.7,
+        "rookie_rank": 66,
+        "veteran_rank": 34
+      },
+      {
+        "name": "Kyren Williams",
+        "pos": "RB",
+        "early_ppg": 14.4,
+        "rest_ppg": 16.0,
+        "rookie_rank": 52,
+        "veteran_rank": 32
+      }
+    ]
+  },
+  "agents": [
+    {
+      "name": "Recency",
+      "claim": "Start whoever's hot \u2014 trust the last three weeks.",
+      "signal": "recency",
+      "share": 0.236,
+      "is_naive": true
+    },
+    {
+      "name": "Season",
+      "claim": "Trust the full-season body of work, not a hot streak.",
+      "signal": "season",
+      "share": 0.487,
+      "is_naive": false
+    },
+    {
+      "name": "Volume",
+      "claim": "Opportunity is real \u2014 chase targets and carries.",
+      "signal": "volume",
+      "share": 0.145,
+      "is_naive": false
+    },
+    {
+      "name": "Trend",
+      "claim": "Rising usage is a breakout before the box score shows it.",
+      "signal": "opp_trend",
+      "share": 0.132,
+      "is_naive": false
     }
   ]
 }

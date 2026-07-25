@@ -17,7 +17,7 @@ import config, llm
 _WORKERS = 1 if config.MOCK else int(__import__("os").environ.get("PARALLEL_WORKERS", "8"))
 
 
-def _episode_for(persona, agent, playbook, condition, round_index, is_validation=False):
+def _single_episode(persona, agent, playbook, condition, round_index, is_validation=False):
     """One independent chain: propose → react → judge → Episode. Pure/no shared writes,
     so many run concurrently; the caller saves results sequentially."""
     proposal = agent.propose(persona.profile, playbook, config.GIFTS_PER_PROPOSAL)
@@ -28,6 +28,34 @@ def _episode_for(persona, agent, playbook, condition, round_index, is_validation
                    reaction=to_json(reaction), score=to_json(score),
                    playbook_version=playbook.version, is_validation=is_validation,
                    condition=condition, occasion=persona.occasion, round_index=round_index)
+
+
+# [Round-2 Phase 1] Best-of-N + judge-as-verifier. `signal.judge` IS the verifier — and since
+# Phase 2 it's automatically a majority-vote PANEL when JUDGE_PANEL_SIZE>1, so we get a stronger
+# verifier for free just by calling judge(). Because judge() needs a Reaction, each candidate's
+# score comes from a FULL propose→react→judge chain; we keep the candidate whose
+# Score.thoughtfulness is highest (ties → the first, matching Python max()).
+def _best_of_n_episode(persona, agent, playbook, condition, round_index, is_validation=False):
+    """Build N candidate chains (config.BEST_OF_N) and return the max-thoughtfulness Episode.
+    Cost is bounded: exactly N × the single-candidate chain (N propose + N react + N judge[panel]
+    calls), all counted through llm.calls_made(). Ties resolve to the first candidate. The
+    returned Episode has the SAME shape/fields as _single_episode's, so store.save + the
+    dashboard are unaffected — Best-of-N only changes WHICH candidate is kept, not the contract."""
+    n = max(1, int(getattr(config, "BEST_OF_N", 1) or 1))
+    candidates = [_single_episode(persona, agent, playbook, condition, round_index, is_validation)
+                  for _ in range(n)]
+    # max() returns the first element on a tie, so equal-scoring candidates → the first proposed.
+    return max(candidates, key=lambda ep: ep.score["thoughtfulness"])
+
+
+def _episode_for(persona, agent, playbook, condition, round_index, is_validation=False):
+    """The per-(recipient, agent) chain the runner fans out. BEST_OF_N=1 (default) is exactly
+    today's single propose→react→judge Episode, byte-for-byte; BEST_OF_N=N>1 verifies N
+    candidates with signal.judge and keeps the best. Every caller (run_round, validate) is
+    unchanged — the Best-of-N switch lives entirely behind this one entrypoint."""
+    if max(1, int(getattr(config, "BEST_OF_N", 1) or 1)) == 1:
+        return _single_episode(persona, agent, playbook, condition, round_index, is_validation)
+    return _best_of_n_episode(persona, agent, playbook, condition, round_index, is_validation)
 
 
 def _run_chains(tasks):
@@ -59,7 +87,13 @@ def run_round(swarm, playbook, store, batch, condition, round_index, distill=Tru
     # composition. The OFF arm runs as condition "swarm_nodistill" so the two are separable.
     import os as _os
     if distill and not _os.environ.get("NO_DISTILL"):
-        swarm.distill(store.top_episodes(n=5, condition=condition), playbook)
+        top = store.top_episodes(n=5, condition=condition)
+        # [Round-2 Phase 3] When ACE_CURATION is on, also feed the round's worst episodes so
+        # the Reflector can emit GEPA-style "avoid" lessons. Flag OFF => bottom stays None =>
+        # distill() runs its byte-identical legacy path. held_out_eval stays None here (the
+        # real per-lesson gate needs the live LLM judge and only runs deployed).
+        bottom = store.bottom_episodes(n=5, condition=condition) if config.ACE_CURATION else None
+        swarm.distill(top, playbook, bottom_episodes=bottom)
 
 
 def validate(swarm, playbook, store, held_out, round_index):
@@ -75,7 +109,7 @@ def validate(swarm, playbook, store, held_out, round_index):
         store.save(ep)
 
 
-def run_experiment(store, rounds, condition, personas_per_round, held_out=None):
+def run_experiment(store, rounds, condition, personas_per_round, held_out=None, on_round=None):
     llm.reset_calls()   # [P1] cost guard is per-RUN, not per-process
     solo = condition.startswith("solo")
     # "swarm_nodistill" = full swarm, but the shared playbook never grows (A/B OFF arm).
@@ -90,4 +124,13 @@ def run_experiment(store, rounds, condition, personas_per_round, held_out=None):
             validate(swarm, playbook, store, held_out, round_index=r)
         print(f"  [{condition}] round {r+1}/{rounds} done — "
               f"playbook v{playbook.version}, calls={llm.calls_made()}")
+        # Checkpoint AFTER each round (charts + playbook), so the dashboard curve grows live
+        # and a run that dies mid-way still leaves a real, published result (fixes #38's
+        # "nothing publishes because the run never reaches the end"). Never let a checkpoint
+        # failure break the round loop.
+        if on_round:
+            try:
+                on_round(r, playbook)
+            except Exception as e:
+                print(f"  [checkpoint] round {r} skipped: {e}")
     return playbook

@@ -77,7 +77,21 @@ class Episode:
 # ── The learning substrate (Warren writes via distill; every agent reads) ──
 class Playbook:
     """The 'policy'. We don't fine-tune — learning = this list of lessons growing,
-    injected into the gift agents' prompts each round."""
+    injected into the gift agents' prompts each round.
+
+    ── FROZEN CONTRACT (Round-2) ──
+    These are the STABLE public surfaces every caller relies on — do NOT change their
+    signatures or remove them:
+      • .entries : list[dict]  — each dict has at least {"text","source_episode_ids",
+                    "added_at"}; swarm.distill also attaches {"wins","trials"} and
+                    retrieval._confidence / playbook_artifact._wilson read those keys.
+      • .version : int         — monotonic learning counter (never rewind it).
+      • add(text: str, source_ids: list[str]) -> None
+      • as_prompt(profile: dict | None = None) -> str
+    Round-2 Phase 3 (ACE delta-curation) may ONLY ADD new methods (e.g. refine_in_place,
+    remove, merge_or_add, prune, per-lesson gate helpers) and may enrich entry dicts with
+    NEW optional keys. It must not break the four surfaces above or the entry keys listed.
+    """
     def __init__(self):
         self.entries: list[dict] = []   # [{"text","source_episode_ids","added_at"}]
         self.version: int = 0
@@ -86,6 +100,34 @@ class Playbook:
         self.entries.append({"text": text, "source_episode_ids": source_ids,
                              "added_at": time.time()})
         self.version += 1
+
+    # ── Round-2 Phase 3 (ACE delta-curation) — ADD-only, additive to the frozen surface ──
+    def refine_in_place(self, index: int, text: str, source_ids: list[str] | None = None,
+                        wins: int = 0, trials: int = 0) -> dict:
+        """Supersede the lesson at `index` IN PLACE (an ACE 'refine' delta): keep the newer
+        phrasing, MERGE provenance (source_episode_ids), and ACCUMULATE wins/trials so
+        reinforcement raises confidence. Bumps version (reinforcement is a learning event).
+        Entry-dict keys stay stable — text/source_episode_ids/added_at/wins/trials."""
+        e = self.entries[index]
+        e["text"] = text
+        if source_ids:
+            e["source_episode_ids"] = list(set(e.get("source_episode_ids", [])) | set(source_ids))
+        e["wins"] = e.get("wins", 0) + wins
+        e["trials"] = e.get("trials", 0) + trials
+        self.version += 1
+        return e
+
+    def remove(self, index_or_predicate) -> int:
+        """Delete lessons (an ACE 'remove' delta) — pass an int index, or a
+        predicate(entry) -> bool to drop every matching entry. Returns the count removed.
+        version is monotonic (a learning counter): a removal never rewinds it, matching the
+        prune contract in swarm.py."""
+        before = len(self.entries)
+        if callable(index_or_predicate):
+            self.entries = [e for e in self.entries if not index_or_predicate(e)]
+        else:
+            del self.entries[index_or_predicate]
+        return before - len(self.entries)
 
     def as_prompt(self, profile: dict | None = None) -> str:
         """Render lessons for injection into a gift-agent prompt.

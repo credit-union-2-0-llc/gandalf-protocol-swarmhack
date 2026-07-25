@@ -60,6 +60,32 @@ jobs:
                          "AZURE_STORAGE_CONNECTION_STRING=secretref:storage-conn" \
                          "PARALLEL_WORKERS=8"
           fi
+          # Make sure the just-deployed revision actually gets traffic. In multiple-revision mode
+          # `update` creates a new revision but does NOT shift traffic (this silently pinned old
+          # deploys); force it. In single-revision mode the platform already routes 100% to latest
+          # and `traffic set` is an error, so only run it when the app is in Multiple mode.
+          MODE=$(az containerapp show -n "$APP" -g "$RESOURCE_GROUP" \
+            --query properties.configuration.activeRevisionsMode -o tsv)
+          if [ "$MODE" = "Multiple" ]; then
+            az containerapp ingress traffic set -n "$APP" -g "$RESOURCE_GROUP" --revision-weight latest=100
+          else
+            echo "single-revision mode — platform routes traffic to latest automatically"
+          fi
+
+      - name: Wire Guild control-panel key (optional)
+        # Lights up the embedded Guild "run & watch" panel on the dashboard. No-op unless the
+        # LITELLM-style GUILD_API_KEY secret exists, so this is safe when it's not configured.
+        # The value is a Guild trigger key "<key_id>:<key_secret>" (mint in Guild → Triggers).
+        run: |
+          if [ -n "${{ secrets.GUILD_API_KEY }}" ]; then
+            echo "GUILD_API_KEY present — wiring the control-panel embed"
+            az containerapp secret set -n "$APP" -g "$RESOURCE_GROUP" \
+              --secrets "guild-key=${{ secrets.GUILD_API_KEY }}" -o none
+            az containerapp update -n "$APP" -g "$RESOURCE_GROUP" \
+              --set-env-vars "GUILD_API_KEY=secretref:guild-key" -o none
+          else
+            echo "GUILD_API_KEY not set — Guild panel stays hidden (dashboard unaffected)"
+          fi
 
       - name: Show URL
         run: |

@@ -59,6 +59,19 @@ PERSONAS_PER_ROUND = int(os.environ.get("PERSONAS_PER_ROUND", "6"))
 GIFTS_PER_PROPOSAL = int(os.environ.get("GIFTS_PER_PROPOSAL", "3"))
 SWARM_SIZE = int(os.environ.get("SWARM_SIZE", "4"))   # diverse agents in the swarm condition
 
+# ── Round-2 feature flags (pre-declared here so the three parallel phases don't collide
+# in config.py). ALL default to CURRENT behavior so every change ships INERT and is enabled
+# per-config/per-deploy. See .planning/round2-improvements.md. ──
+# Phase 1 — Best-of-N proposal + judge-as-verifier: generate N candidate proposals per
+# (recipient, agent) and keep the top-scoring. 1 = single proposal = current behavior.
+BEST_OF_N = int(os.environ.get("BEST_OF_N", "1"))
+# Phase 2 — Judge panel: signal.judge runs K independent sub-judges and takes majority on
+# each binary sub-check. 1 = single judge call = current behavior.
+JUDGE_PANEL_SIZE = int(os.environ.get("JUDGE_PANEL_SIZE", "1"))
+# Phase 3 — ACE delta-curation: Reflector→Curator incremental playbook edits + per-lesson
+# held-out gate, instead of wholesale re-distill. Off = current distill behavior.
+ACE_CURATION = os.environ.get("ACE_CURATION", "").lower() in ("1", "true", "yes", "on")
+
 # Cost guardrail: hard stop if a single run would exceed this many LLM calls.
 MAX_CALLS_PER_RUN = int(os.environ.get("MAX_CALLS_PER_RUN", "3000"))  # was 800 — too low; 6-round 30-persona swarm cut off at round 5
 
