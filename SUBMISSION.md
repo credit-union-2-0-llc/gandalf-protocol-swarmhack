@@ -7,7 +7,7 @@ next round, and a coach targets the weakest area. It gets better without fine-tu
 football judged by real NFL outcomes.
 
 - **Live app:** https://ca-gandalf-protocol.wittyflower-1831f2a2.westus2.azurecontainerapps.io
-- **Demo video:** _(link)_
+- **Demo video:** https://share.descript.com/view/VgZ78jr5pmP
 - **Demo script:** [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md) · **How it works:** `/guide` on the live app
 
 ## The loop
@@ -36,7 +36,8 @@ Three charts are the whole proof, and one keeps us honest:
 
 - **Gifts** (`/demo`, `/`) — swarm scores a consistent **+0.138** thoughtfulness above solo.
 - **Fantasy football** (`/fantasy`) — judged by **real 2025 NFL points** (ground truth, not an LLM):
-  swarm climbs **17.0 → 20.6** PPG/starter and beats the naive roster.
+  the naive drafter (**95.9** pts/wk) misses the playoffs; the swarm that learned (**100.4**)
+  clinches — **+4.5 pts/week**, same players and schedule, the only variable is what it learned.
 - **Roadmap** ([`DOMAINS.md`](./DOMAINS.md)) — travel, date-night: same loop, swap the world + judge.
 
 ## Architecture
