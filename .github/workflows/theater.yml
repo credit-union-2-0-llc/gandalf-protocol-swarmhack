@@ -1,0 +1,20 @@
+# Copy to .github/workflows/theater.yml in any CU2 repo. This is the whole file.
+#
+# No per-repo setup: FORGE_BUILD_APP_ID and FORGE_BUILD_PRIVATE_KEY are
+# organisation secrets with visibility "all", and the cu2-forge-build App is
+# installed on every repo, so `secrets: inherit` is sufficient.
+#
+# The gate is a RATCHET: it fails only on verification theater the change
+# introduces, and ignores whatever the repo already carries. It is green on
+# arrival by construction, so adopting it does not require cleaning up first.
+
+name: Theater gate
+
+on:
+  push: { branches: [main] }
+  pull_request: {}
+
+jobs:
+  theater:
+    uses: credit-union-2-0-llc/cu2-standards/.github/workflows/reusable-theater.yml@main
+    secrets: inherit
