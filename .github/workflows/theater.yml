@@ -1,5 +1,9 @@
 # Theater gate — blocks verification theater INTRODUCED by a change, never the
-# backlog this repo already carries. Source: the public cu-agent-standards repo.
+# backlog this repo already carries. Green on arrival by construction.
+#
+# No secrets, no tokens, no organisation settings: the source repo is public.
+# github.com/credit-union-2-0-llc/cu-agent-standards
+
 name: Theater gate
 
 on:
@@ -9,6 +13,3 @@ on:
 jobs:
   theater:
     uses: credit-union-2-0-llc/cu-agent-standards/.github/workflows/reusable-theater.yml@main
-    secrets:
-      FORGE_BUILD_APP_ID: ${{ secrets.FORGE_BUILD_APP_ID }}
-      FORGE_BUILD_PRIVATE_KEY: ${{ secrets.FORGE_BUILD_PRIVATE_KEY }}
