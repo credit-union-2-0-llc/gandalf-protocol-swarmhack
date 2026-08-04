@@ -1,0 +1,18 @@
+# Sanitize gate — blocks internal operating context / secrets / PII from
+# landing in this PUBLIC repo. Full scan every run, not a ratchet: the job
+# is "nothing sensitive is present," not "nothing new was introduced."
+#
+# No secrets, no tokens, no organisation settings: the source repo is public.
+# github.com/credit-union-2-0-llc/cu-agent-standards
+
+name: Sanitize gate
+
+on:
+  push: { branches: [main] }
+  pull_request: {}
+
+jobs:
+  sanitize:
+    uses: credit-union-2-0-llc/cu-agent-standards/.github/workflows/reusable-sanitize.yml@main
+    with:
+      profile: public

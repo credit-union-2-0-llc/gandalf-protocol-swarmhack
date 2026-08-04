@@ -1,0 +1,58 @@
+# .cu2-sanitize-allow — narrow, documented exceptions for cu2_sanitize_scan.py
+# See tools/sanitize/README.md in credit-union-2-0-llc/cu-agent-standards for
+# the tier model, the two profiles, and the rules of the road for this file.
+
+# ---------------------------------------------------------------------------
+# Public GitHub repo self-reference (cu-agent-standards, already public, is
+# the documented reusable-workflow consumption pattern).
+# ---------------------------------------------------------------------------
+line:github\.com/credit-union-2-0-llc/cu-agent-standards
+line:uses: credit-union-2-0-llc/cu-agent-standards/\.github/workflows/reusable-theater\.yml@main
+line:uses: credit-union-2-0-llc/cu-agent-standards/\.github/workflows/reusable-sanitize\.yml@main
+
+# ---------------------------------------------------------------------------
+# This repo is a SwarmHack hackathon submission (see SUBMISSION.md,
+# DEMO-SCRIPT.md). Its live Azure Container App URL is the intentional public
+# demo entry point for judges/reviewers -- disclosing it is the point, not a
+# leak. Reviewed 2026-08-04.
+# ---------------------------------------------------------------------------
+line:ca-gandalf-protocol\.wittyflower-1831f2a2\.westus2\.azurecontainerapps\.io
+
+# ---------------------------------------------------------------------------
+# Functionally required Azure deploy targets -- the actual resource names
+# this repo's own CI/CD and deploy docs target via `az` CLI. Same reasoning
+# as accepted in credit-union-2-0-llc/broflo's .cu2-sanitize-allow.
+# ---------------------------------------------------------------------------
+line:RESOURCE_GROUP: rg-cu2-forge
+line:IMG="\$ACR\.azurecr\.io/\$IMAGE
+line:--registry-server "\$ACR\.azurecr\.io"
+line:--image giftgymacr\.azurecr\.io/giftgym:latest
+line:--registry-login-server giftgymacr\.azurecr\.io
+
+# ---------------------------------------------------------------------------
+# Demo chart-URL example in DEPLOY.md prose -- real Storage account FQDN,
+# same class as the accepted ACR references above.
+# ---------------------------------------------------------------------------
+line:"charts": \["https://giftgymstorage\.blob\.core\.windows\.net/giftgym/charts
+
+# ---------------------------------------------------------------------------
+# LiteLLM gateway hostname -- same known, deliberately NOT-yet-fixed finding
+# as in credit-union-2-0-llc/broflo's .cu2-sanitize-allow. Moving it to a
+# repo variable is the right fix but touches a live deploy step, so it was
+# kept out of this pass. Revisit before this file is next touched.
+# ---------------------------------------------------------------------------
+line:ANTHROPIC_BASE_URL=https://ca-litellm-gateway\.wittyflower-1831f2a2\.westus2\.azurecontainerapps\.io
+line:GATEWAY_URL: https://ca-litellm-gateway\.wittyflower-1831f2a2\.westus2\.azurecontainerapps\.io
+
+# ---------------------------------------------------------------------------
+# .env.example placeholder (literal "sk-ant-..."), not a real key.
+# ---------------------------------------------------------------------------
+line:ANTHROPIC_API_KEY=sk-ant-\.\.\.
+
+# ---------------------------------------------------------------------------
+# Arbitrary UUID used only to satisfy the LiteLLM gateway's format check
+# (cu2_policy_plugin requires metadata.user_id to be a syntactically valid
+# UUID) -- not a real user, tenant, or resource identifier. See the comment
+# directly above this default in llm.py.
+# ---------------------------------------------------------------------------
+line:_GATEWAY_USER_ID = os\.environ\.get\("GATEWAY_USER_ID", "a7f3c2e1-9b4d-4e6a-8c2f-1d5e7b9a0c34"\)
