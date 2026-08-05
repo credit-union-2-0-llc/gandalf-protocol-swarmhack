@@ -36,15 +36,6 @@ line:--registry-login-server giftgymacr\.azurecr\.io
 line:"charts": \["https://giftgymstorage\.blob\.core\.windows\.net/giftgym/charts
 
 # ---------------------------------------------------------------------------
-# LiteLLM gateway hostname -- same known, deliberately NOT-yet-fixed finding
-# as in credit-union-2-0-llc/broflo's .cu2-sanitize-allow. Moving it to a
-# repo variable is the right fix but touches a live deploy step, so it was
-# kept out of this pass. Revisit before this file is next touched.
-# ---------------------------------------------------------------------------
-line:ANTHROPIC_BASE_URL=https://ca-litellm-gateway\.wittyflower-1831f2a2\.westus2\.azurecontainerapps\.io
-line:GATEWAY_URL: https://ca-litellm-gateway\.wittyflower-1831f2a2\.westus2\.azurecontainerapps\.io
-
-# ---------------------------------------------------------------------------
 # .env.example placeholder (literal "sk-ant-..."), not a real key.
 # ---------------------------------------------------------------------------
 line:ANTHROPIC_API_KEY=sk-ant-\.\.\.
