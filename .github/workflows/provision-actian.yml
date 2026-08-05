@@ -33,7 +33,7 @@ jobs:
         if: ${{ inputs.teardown }}
         run: |
           az containerapp delete -n "$ACTIAN_APP" -g "$RESOURCE_GROUP" --yes || true
-          az containerapp update -n "$GANDALF_APP" -g "$RESOURCE_GROUP" --remove-env-vars ACTIAN_CONNECTION_STRING || true
+          az containerapp update -n "$GANDALF_APP" -g "$RESOURCE_GROUP" --remove-env-vars ACTIAN_CONNECTION_STRING || true  # theater-ok: teardown path; if ACTIAN_CONNECTION_STRING is already absent or the app is partially deleted the update fails safely; goal is to remove the env var if present
           echo "Actian torn down; Gandalf falls back to lexical retrieval (never-cut trio safe)."
 
       - name: Provision Actian VectorAI DB (Azure Container App, ~8 GB)
