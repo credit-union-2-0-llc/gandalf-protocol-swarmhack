@@ -17,7 +17,7 @@ env:
   IMAGE: gandalf-protocol
   RESOURCE_GROUP: rg-cu2-forge
   APP: ca-gandalf-protocol
-  GATEWAY_URL: https://ca-litellm-gateway.wittyflower-1831f2a2.westus2.azurecontainerapps.io
+  GATEWAY_URL: ${{ vars.LITELLM_GATEWAY_URL }}
 
 jobs:
   deploy:
