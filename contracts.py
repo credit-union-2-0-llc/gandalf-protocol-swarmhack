@@ -142,7 +142,7 @@ class Playbook:
                 import retrieval
                 return retrieval.lessons_for(self, profile)
             except Exception:
-                pass  # never let retrieval break the loop; fall through to dump-all
+                pass  # theater-ok: retrieval failure must never abort the loop; falls through to dump-all lessons as safe fallback
         return "\n".join(f"- {e['text']}" for e in self.entries)
 
 

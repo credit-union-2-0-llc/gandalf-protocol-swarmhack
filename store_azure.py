@@ -28,7 +28,7 @@ class Store:
         try:
             self.client.create_container(name=container)
         except:
-            pass  # already exists
+            pass  # theater-ok: Azure blob container may already exist; idempotent create
         # Parity with store.py: reload prior episodes so a fresh process
         # (`python dashboard.py`, or any worker that didn't run the loop) can replay.
         self.load()

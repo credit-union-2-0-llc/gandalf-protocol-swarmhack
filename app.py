@@ -193,7 +193,7 @@ def _current_playbook():
         for l in json.loads(blob.download_blob().readall()).get("lessons", []):
             pb.add(l["text"], l.get("source_episode_ids", []))
     except Exception:
-        pass
+        pass  # theater-ok: playbook blob may not exist yet or be transiently unavailable; empty playbook is a valid state
     return pb
 
 
@@ -236,7 +236,7 @@ def suggest():
                 container=st.container, blob=cache_blob).download_blob().readall()
             return Response(cached, mimetype="application/json")
         except Exception:
-            pass  # cold cache — generate below
+            pass  # theater-ok: cold cache — no cached response exists yet; control falls through to generate fresh content below
 
     agent = GiftAgent("bold-experiences")
     try:
@@ -256,7 +256,7 @@ def suggest():
         st.client.get_blob_client(
             container=st.container, blob=cache_blob).upload_blob(data, overwrite=True)
     except Exception:
-        pass  # cache write is best-effort; never fail the request on it
+        pass  # theater-ok: cache write is best-effort; a write failure never fails the request
     return Response(data, mimetype="application/json")
 
 
@@ -507,7 +507,7 @@ def api_actian():
             client.collections.create("gandalf_probe",
                 vectors_config=VectorParams(size=retrieval.EMBED_DIM, distance=Distance.Cosine))
         except Exception:
-            pass  # already exists
+            pass  # theater-ok: vector collection may already exist from a prior run; idempotent create
         vec = retrieval._embed("a thoughtful birthday gift for a coffee lover")
         client.points.upsert("gandalf_probe",
             [PointStruct(id=1, vector=vec, payload={"text": "probe"})])

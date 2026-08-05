@@ -114,7 +114,7 @@ def call_llm(role: str, system: str, user: str, ctx: dict | None = None,
             # Two malformed responses in a row: cost this ONE episode, not the whole run.
             # Callers use .get(..., default) so an empty dict degrades gracefully.
             print(f"  [llm] {role}: unparseable JSON after retry; skipping (empty result)")
-            return {}
+            return {}  # theater-ok: unparseable JSON after retry is printed above; callers use .get(..., default) so empty dict degrades gracefully
 
 
 # ────────────────────────────── MOCK ENGINE ──────────────────────────────

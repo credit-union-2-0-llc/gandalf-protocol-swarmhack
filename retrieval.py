@@ -152,7 +152,7 @@ def _actian_topk(entries: list[dict], query: str, k: int) -> list[dict]:
             client.collections.create(_ACTIAN_COLLECTION,
                 vectors_config=VectorParams(size=EMBED_DIM, distance=Distance.Cosine))
         except Exception:
-            pass  # already exists
+            pass  # theater-ok: Actian collection may already exist from a prior run; idempotent create
         _actian_ready = True
     # re-upsert lessons every call (idempotent by stable id) — cheap; keeps ephemeral DB filled
     points = [PointStruct(id=_stable_id(e["text"]), vector=_embed(e["text"]),

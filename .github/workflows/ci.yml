@@ -41,5 +41,5 @@ jobs:
       # continue-on-error so MOCK-only artifacts (e.g. the flat-curve canary) don't
       # red the build; the deterministic guards above are the real gate.
       - name: Eval report (mock, informational)
-        continue-on-error: true
+        continue-on-error: true  # theater-ok: MOCK-only artifacts may legitimately fail; the deterministic guards above are the real gate; this step is informational only
         run: python evals/run_evals.py
