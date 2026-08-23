@@ -1,8 +1,13 @@
 # Gandalf Protocol
 
-A self-play learning orchestrator for multi-agent systems. Agents propose solutions to simulated
-scenarios, a judge scores outcomes, a swarm shares what works via a growing knowledge base, and
-a coach targets weak spots. Charts prove it learns — and learns *faster together*.
+A population-of-proposers learning orchestrator for multi-agent systems. Multiple differently-styled
+agents propose solutions to simulated scenarios, a **static** judge scores outcomes, a swarm shares
+what works via a growing knowledge base (a "playbook"), and a coach targets weak spots. This is
+proposer-population search distilled into a shared playbook — not self-play: there's no competing
+policy and no adaptation against the judge at inference time. Ablation charts compare the swarm
+curve against a solo baseline; treat any single run's lift number as noisy rather than proof on its
+own. This repo is the frozen public SwarmHack snapshot — active development, including a
+harder sealed-gate evaluation tier, continues in the private `gandalf-protocol` repo.
 
 First use case: Broflo gift recommendations. But Gandalf works for any domain where you can
 simulate counterparties and measure success.

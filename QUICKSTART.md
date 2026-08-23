@@ -6,7 +6,8 @@
 
 ## What is Gandalf Protocol?
 
-A self-play learning orchestrator for multi-agent systems. You build:
+A population-of-proposers learning orchestrator for multi-agent systems (not self-play — the judge
+is static, there's no competing policy). You build:
 - **Agents** that propose solutions
 - **A World** that simulates scenarios and reacts
 - **A Judge** that scores outcomes
