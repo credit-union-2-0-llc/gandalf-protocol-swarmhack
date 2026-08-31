@@ -19,7 +19,9 @@ jobs:
           python-version: "3.12"
 
       - name: Install deps
-        run: pip install -r requirements.txt
+        # pytest is not in requirements.txt: until now every test file in CI was
+        # invoked as `python test_x.py`, so nothing needed a runner.
+        run: pip install -r requirements.txt 'pytest>=8,<10'
 
       # ── Deterministic guards — zero cost, run in MOCK, ALWAYS gate ──
       - name: Judge deterministic checks (#5)
@@ -30,6 +32,17 @@ jobs:
 
       - name: Gold-set structural guard (#13)
         run: python test_gold_set.py
+
+      - name: ACE curation guard
+        run: python test_ace_curation.py
+
+      # test_best_of_n.py and test_judge_panel.py are pytest-style: they define
+      # test functions and have no `if __name__ == "__main__"` block. Invoked as
+      # `python test_judge_panel.py` -- the idiom every other test step here uses
+      # -- they import cleanly, run nothing, and exit 0. That is a green step
+      # covering zero assertions, so they get a real runner instead.
+      - name: Best-of-N and judge-panel guards (pytest)
+        run: python -m pytest test_best_of_n.py test_judge_panel.py -q
 
       # ── Eval report (informational) ──
       # Runs run_evals.py in MOCK: exercises the learning check and validates the
